@@ -739,7 +739,7 @@ byte BNO055::read8(adafruit_bno055_reg_t reg) {
 #else
   _wire->send(reg);
 #endif
-  _wire->endTransmission();
+  _wire->endTransmission(false);
   _wire->requestFrom(_address, (byte)1);
 #if ARDUINO >= 100
   value = _wire->read();
@@ -761,7 +761,7 @@ bool BNO055::readLen(adafruit_bno055_reg_t reg, byte *buffer,
 #else
   _wire->send(reg);
 #endif
-  _wire->endTransmission();
+  _wire->endTransmission(false);
   _wire->requestFrom(_address, (byte)len);
 
   for (uint8_t i = 0; i < len; i++) {
