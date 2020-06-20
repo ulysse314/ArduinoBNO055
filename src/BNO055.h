@@ -1,5 +1,5 @@
 /*!
- *  @file Adafruit_BNO055.h
+ *  @file BNO055.h
  *
  *  This is a library for the BNO055 orientation sensor
  *
@@ -19,13 +19,12 @@
  *  MIT license, all text above must be included in any redistribution
  */
 
-#ifndef __ADAFRUIT_BNO055_H__
-#define __ADAFRUIT_BNO055_H__
+#ifndef __BNO055_H__
+#define __BNO055_H__
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include <Wire.h>
 
-#include <Adafruit_Sensor.h>
 #include <utility/imumaths.h>
 
 /** BNO055 Address A **/
@@ -61,7 +60,7 @@ typedef struct {
  *  @brief  Class that stores state and functions for interacting with
  *          BNO055 Sensor
  */
-class Adafruit_BNO055 : public Adafruit_Sensor {
+class BNO055 {
 public:
   /** BNO055 Registers **/
   typedef enum {
