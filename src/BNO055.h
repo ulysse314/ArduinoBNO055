@@ -279,7 +279,7 @@ public:
     VECTOR_GRAVITY = BNO055_GRAVITY_DATA_X_LSB_ADDR
   } adafruit_vector_type_t;
 
-  Adafruit_BNO055(int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A,
+  BNO055(int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A,
                   TwoWire *theWire = &Wire);
 
   bool begin(adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF);
@@ -296,11 +296,6 @@ public:
   imu::Vector<3> getVector(adafruit_vector_type_t vector_type);
   imu::Quaternion getQuat();
   int8_t getTemp();
-
-  /* Adafruit_Sensor implementation */
-  bool getEvent(sensors_event_t *);
-  bool getEvent(sensors_event_t *, adafruit_vector_type_t);
-  void getSensor(sensor_t *);
 
   /* Functions to deal with raw calibration data */
   bool getSensorOffsets(uint8_t *calibData);
