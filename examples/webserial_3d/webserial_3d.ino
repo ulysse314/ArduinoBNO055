@@ -69,6 +69,8 @@ void setup(void)
   Serial.begin(9600);
   Serial.println("WebSerial 3D Firmware"); Serial.println("");
 
+  /* Enable I2C */
+  Wire.begin();
   /* Initialise the sensor */
   if(!bno.begin())
   {

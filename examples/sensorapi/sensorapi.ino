@@ -123,6 +123,8 @@ void setup(void)
   Serial.begin(115200);
   Serial.println("Orientation Sensor Test"); Serial.println("");
 
+  /* Enable I2C */
+  Wire.begin();
   /* Initialise the sensor */
   if(!bno.begin())
   {

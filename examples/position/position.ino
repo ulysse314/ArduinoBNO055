@@ -20,6 +20,8 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
 void setup(void)
 {
   Serial.begin(115200);
+  /* Enable I2C */
+  Wire.begin();
   if (!bno.begin())
   {
     Serial.print("No BNO055 detected");
