@@ -36,28 +36,6 @@ BNO055 bno = BNO055(55, 0x28);
 
 /**************************************************************************/
 /*
-    Displays some basic information on this sensor from the unified
-    sensor API sensor_t type (see Adafruit_Sensor for more information)
-*/
-/**************************************************************************/
-void displaySensorDetails(void)
-{
-  sensor_t sensor;
-  bno.getSensor(&sensor);
-  Serial.println("------------------------------------");
-  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
-  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
-  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
-  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" xxx");
-  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" xxx");
-  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" xxx");
-  Serial.println("------------------------------------");
-  Serial.println("");
-  delay(500);
-}
-
-/**************************************************************************/
-/*
     Arduino setup function (automatically called at startup)
 */
 /**************************************************************************/
@@ -80,9 +58,6 @@ void setup(void)
 
   /* Use external crystal for better accuracy */
   bno.setExtCrystalUse(true);
-   
-  /* Display some basic information on this sensor */
-  displaySensorDetails();
 }
 
 /**************************************************************************/
@@ -94,8 +69,7 @@ void setup(void)
 void loop(void)
 {
   /* Get a new sensor event */
-  sensors_event_t event;
-  bno.getEvent(&event);
+  imu::Vector<3> euler = bno.getVector(BNO055::VECTOR_EULER);
 
   /* Board layout:
          +----------+
@@ -110,11 +84,11 @@ void loop(void)
 
   /* The processing sketch expects data as roll, pitch, heading */
   Serial.print(F("Orientation: "));
-  Serial.print((float)event.orientation.x);
+  Serial.print((float)euler.x());
   Serial.print(F(" "));
-  Serial.print((float)event.orientation.y);
+  Serial.print((float)euler.y());
   Serial.print(F(" "));
-  Serial.print((float)event.orientation.z);
+  Serial.print((float)euler.z());
   Serial.println(F(""));
 
   /* Also send calibration data for each sensor. */
