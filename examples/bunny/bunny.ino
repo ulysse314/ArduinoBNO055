@@ -1,6 +1,6 @@
 #include <Wire.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
+//#include <Adafruit_Sensor.h>
+#include <BNO055.h>
 #include <utility/imumaths.h>
 
 /* This driver uses the Adafruit unified sensor library (Adafruit_Sensor),
@@ -32,7 +32,7 @@
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
+BNO055 bno = BNO055(55, 0x28);
 
 /**************************************************************************/
 /*
