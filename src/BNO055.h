@@ -27,34 +27,7 @@
 
 #include "utility/imumaths.h"
 
-/** BNO055 Address A **/
-#define BNO055_ADDRESS_A (0x28)
-/** BNO055 Address B **/
-#define BNO055_ADDRESS_B (0x29)
-/** BNO055 ID **/
-#define BNO055_ID (0xA0)
-
-/** Offsets registers **/
-#define NUM_BNO055_OFFSET_REGISTERS (22)
-
-/** A structure to represent offsets **/
-typedef struct {
-  int16_t accel_offset_x; /**< x acceleration offset */
-  int16_t accel_offset_y; /**< y acceleration offset */
-  int16_t accel_offset_z; /**< z acceleration offset */
-
-  int16_t mag_offset_x; /**< x magnetometer offset */
-  int16_t mag_offset_y; /**< y magnetometer offset */
-  int16_t mag_offset_z; /**< z magnetometer offset */
-
-  int16_t gyro_offset_x; /**< x gyroscrope offset */
-  int16_t gyro_offset_y; /**< y gyroscrope offset */
-  int16_t gyro_offset_z; /**< z gyroscrope offset */
-
-  int16_t accel_radius; /**< acceleration radius */
-
-  int16_t mag_radius; /**< magnetometer radius */
-} adafruit_bno055_offsets_t;
+class I2CDevice;
 
 /*!
  *  @brief  Class that stores state and functions for interacting with
@@ -62,6 +35,25 @@ typedef struct {
  */
 class BNO055 {
 public:
+  enum class Address {
+    ToLow = 0x28,
+    ToHigh = 0x29,
+  };
+
+  typedef struct {
+    int16_t accOffsetX;
+    int16_t accOffsetY;
+    int16_t accOffsetZ;
+    int16_t magOffsetX;
+    int16_t magOffsetY;
+    int16_t magOffsetZ;
+    int16_t gyrOffsetX;
+    uint16_t gyrOffsetY;
+    uint16_t gyrOffsetZ;
+    uint16_t accRadiusOffsetX;
+    uint16_t magRadiusOffsetY;
+  } OffsetValues;
+
   /** BNO055 Registers **/
   typedef enum {
     /* Page id register definition */
@@ -279,42 +271,36 @@ public:
     VECTOR_GRAVITY = BNO055_GRAVITY_DATA_X_LSB_ADDR
   } adafruit_vector_type_t;
 
-  BNO055(int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A,
+  BNO055(int32_t sensorID = -1, Address address = Address::ToLow,
                   TwoWire *theWire = &Wire);
 
   bool begin(adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF);
-  void setMode(adafruit_bno055_opmode_t mode);
-  void setAxisRemap(adafruit_bno055_axis_remap_config_t remapcode);
-  void setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign);
-  void getRevInfo(adafruit_bno055_rev_info_t *);
-  void setExtCrystalUse(boolean usextal);
-  void getSystemStatus(uint8_t *system_status, uint8_t *self_test_result,
+  bool checkChipID();
+  bool setMode(adafruit_bno055_opmode_t mode);
+  bool setAxisRemap(adafruit_bno055_axis_remap_config_t remapcode);
+  bool setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign);
+  bool getRevInfo(adafruit_bno055_rev_info_t *);
+  bool setExtCrystalUse(boolean usextal);
+  bool getSystemStatus(uint8_t *system_status, uint8_t *self_test_result,
                        uint8_t *system_error);
-  void getCalibration(uint8_t *system, uint8_t *gyro, uint8_t *accel,
+  bool getCalibration(uint8_t *system, uint8_t *gyro, uint8_t *accel,
                       uint8_t *mag);
 
-  imu::Vector<3> getVector(adafruit_vector_type_t vector_type);
-  imu::Quaternion getQuat();
-  int8_t getTemp();
+  bool getVector(adafruit_vector_type_t vector_type, imu::Vector<3> *xyz);
+  bool getQuat(imu::Quaternion *quat);
+  bool getTemp(int8_t *temp);
 
   /* Functions to deal with raw calibration data */
-  bool getSensorOffsets(uint8_t *calibData);
-  bool getSensorOffsets(adafruit_bno055_offsets_t &offsets_type);
-  void setSensorOffsets(const uint8_t *calibData);
-  void setSensorOffsets(const adafruit_bno055_offsets_t &offsets_type);
+  bool getSensorOffsets(OffsetValues *offsets_type);
+  bool setSensorOffsets(OffsetValues offsets_type);
   bool isFullyCalibrated();
 
   /* Power managments functions */
-  void enterSuspendMode();
-  void enterNormalMode();
+  bool enterSuspendMode();
+  bool enterNormalMode();
 
 private:
-  byte read8(adafruit_bno055_reg_t);
-  bool readLen(adafruit_bno055_reg_t, byte *buffer, uint8_t len);
-  bool write8(adafruit_bno055_reg_t, byte value);
-
-  uint8_t _address;
-  TwoWire *_wire;
+  I2CDevice *_busDevice;
 
   int32_t _sensorID;
   adafruit_bno055_opmode_t _mode;
