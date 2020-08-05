@@ -271,8 +271,7 @@ public:
     VECTOR_GRAVITY = BNO055_GRAVITY_DATA_X_LSB_ADDR
   } adafruit_vector_type_t;
 
-  BNO055(int32_t sensorID = -1, Address address = Address::ToLow,
-                  TwoWire *theWire = &Wire);
+  BNO055(Address address = Address::ToLow, TwoWire *theWire = &Wire);
 
   bool begin(adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF);
   bool checkChipID();
@@ -301,8 +300,6 @@ public:
 
 private:
   I2CDevice *_busDevice;
-
-  int32_t _sensorID;
   adafruit_bno055_opmode_t _mode;
 };
 

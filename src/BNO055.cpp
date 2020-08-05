@@ -40,16 +40,13 @@
 
 /*!
  *  @brief  Instantiates a new BNO055 class
- *  @param  sensorID
- *          sensor ID
  *  @param  address
  *          i2c address
  *  @param  theWire
  *          Wire object
  */
-BNO055::BNO055(int32_t sensorID, Address address, TwoWire *wire) :
-    _busDevice(new I2CDevice((int)address, wire)),
-    _sensorID(sensorID) {
+BNO055::BNO055(Address address, TwoWire *wire) :
+    _busDevice(new I2CDevice((int)address, wire))  {
 }
 
 /*!
