@@ -1,6 +1,5 @@
 #include <Wire.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
+#include <BNO055.h>
 #include <utility/imumaths.h>
 
 /* This driver uses the Adafruit unified sensor library (Adafruit_Sensor),
@@ -32,7 +31,7 @@ uint16_t BNO055_SAMPLERATE_DELAY_MS = 100;
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
+BNO055 bno;
 
 void setup(void)
 {
@@ -55,54 +54,40 @@ void setup(void)
 void loop(void)
 {
   //could add VECTOR_ACCELEROMETER, VECTOR_MAGNETOMETER,VECTOR_GRAVITY...
-  sensors_event_t orientationData , angVelocityData , linearAccelData;
-  bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
-  bno.getEvent(&angVelocityData, Adafruit_BNO055::VECTOR_GYROSCOPE);
-  bno.getEvent(&linearAccelData, Adafruit_BNO055::VECTOR_LINEARACCEL);
+  struct {
+    BNO055::adafruit_vector_type_t type;
+    const char *name;
+  } vectorTypes[] = {
+    { BNO055::VECTOR_EULER, "Euler" },
+    { BNO055::VECTOR_GYROSCOPE, "Gyro" },
+    { BNO055::VECTOR_LINEARACCEL, "Linear" },
+    { BNO055::VECTOR_ACCELEROMETER, "Accel" },
+    { BNO055::VECTOR_MAGNETOMETER, "Mag" },
+    { BNO055::VECTOR_GRAVITY, "Grav" },
+  };
+  for (size_t ii = 0; ii < sizeof(vectorTypes) / sizeof(vectorTypes[0]); ++ii) {
+    imu::Vector<3> vector;
+    Serial.print(vectorTypes[ii].name);
+    Serial.print(": ");
+    if (bno.getVector(vectorTypes[ii].type, &vector)) {
+      Serial.print("x= ");
+      Serial.print(vector[0]);
+      Serial.print(" | y= ");
+      Serial.print(vector[1]);
+      Serial.print(" | z= ");
+      Serial.println(vector[2]);
+    } else {
+      Serial.println("failure");
+    }
+  }
 
-  printEvent(&orientationData);
-  printEvent(&angVelocityData);
-  printEvent(&linearAccelData);
-
-  int8_t boardTemp = bno.getTemp();
-  Serial.print(F("temperature: "));
-  Serial.println(boardTemp);
-
+  Serial.print("temperature: ");
+  int8_t boardTemp;
+  if (bno.getTemperature(&boardTemp)) {
+    Serial.println(boardTemp);
+  } else {
+    Serial.println("failure");
+  }
 
   delay(BNO055_SAMPLERATE_DELAY_MS);
 }
-
-void printEvent(sensors_event_t* event) {
-  Serial.println();
-  Serial.print(event->type);
-  double x = -1000000, y = -1000000 , z = -1000000; //dumb values, easy to spot problem
-  if (event->type == SENSOR_TYPE_ACCELEROMETER) {
-    x = event->acceleration.x;
-    y = event->acceleration.y;
-    z = event->acceleration.z;
-  }
-  else if (event->type == SENSOR_TYPE_ORIENTATION) {
-    x = event->orientation.x;
-    y = event->orientation.y;
-    z = event->orientation.z;
-  }
-  else if (event->type == SENSOR_TYPE_MAGNETIC_FIELD) {
-    x = event->magnetic.x;
-    y = event->magnetic.y;
-    z = event->magnetic.z;
-  }
-  else if ((event->type == SENSOR_TYPE_GYROSCOPE) || (event->type == SENSOR_TYPE_ROTATION_VECTOR)) {
-    x = event->gyro.x;
-    y = event->gyro.y;
-    z = event->gyro.z;
-  }
-
-  Serial.print(": x= ");
-  Serial.print(x);
-  Serial.print(" | y= ");
-  Serial.print(y);
-  Serial.print(" | z= ");
-  Serial.println(z);
-}
-
-
