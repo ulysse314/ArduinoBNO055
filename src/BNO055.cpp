@@ -404,8 +404,12 @@ bool BNO055::getCalibration(uint8_t *sys, uint8_t *gyro,
  *  @brief  Gets the temperature in degrees celsius
  *  @return temperature in degrees celsius
  */
-bool BNO055::getTemp(int8_t *temp) {
-  return _busDevice->read8FromRegister((uint8_t *)temp, BNO055_CALIB_STAT_ADDR) != 1;
+bool BNO055::getTemperature(int8_t *temp) {
+  return _busDevice->read8FromRegister((uint8_t *)temp, BNO055_TEMP_ADDR) == 1;
+}
+
+bool BNO055::setTemperatureSource(TemperatureSource source) {
+  return _busDevice->write8ToRegister((uint8_t)source, BNO055_TEMP_SOURCE_ADDR) != 1;
 }
 
 /*!

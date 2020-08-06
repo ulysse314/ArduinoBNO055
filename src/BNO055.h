@@ -40,6 +40,11 @@ public:
     ToHigh = 0x29,
   };
 
+  enum class TemperatureSource {
+    Accelerometer = 0,
+    Gyroscope = 1,
+  };
+
   typedef struct {
     int16_t accOffsetX;
     int16_t accOffsetY;
@@ -287,7 +292,9 @@ public:
 
   bool getVector(adafruit_vector_type_t vector_type, imu::Vector<3> *xyz);
   bool getQuat(imu::Quaternion *quat);
-  bool getTemp(int8_t *temp);
+
+  bool getTemperature(int8_t *temp);
+  bool setTemperatureSource(TemperatureSource source);
 
   /* Functions to deal with raw calibration data */
   bool getSensorOffsets(OffsetValues *offsets_type);
