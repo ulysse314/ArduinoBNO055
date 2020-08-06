@@ -34,6 +34,21 @@
 
 #include "Adafruit_BNO055.h"
 
+#define PRINT_DATA 1
+
+#if PRINT_DATA
+namespace {
+
+void printOneByte(uint8_t byte) {
+  if (byte < 0x10) {
+    Serial.print("0");
+  }
+  Serial.print(byte, HEX);
+}
+
+}
+#endif
+
 /*!
  *  @brief  Instantiates a new Adafruit_BNO055 class
  *  @param  sensorID
@@ -834,6 +849,16 @@ bool Adafruit_BNO055::write8(adafruit_bno055_reg_t reg, byte value) {
 #endif
   _wire->endTransmission();
 
+#if PRINT_DATA
+  Serial.print("Write to ");
+  Serial.print(_address, HEX);
+  Serial.print(", address: 0x");
+  printOneByte((uint8_t)reg);
+  Serial.print(", received: 0x");
+  printOneByte((uint8_t)value);
+  Serial.println(" ");
+#endif
+
   /* ToDo: Check for error! */
   return true;
 }
@@ -858,6 +883,15 @@ byte Adafruit_BNO055::read8(adafruit_bno055_reg_t reg) {
   value = _wire->receive();
 #endif
 
+#if PRINT_DATA
+  Serial.print("Read from ");
+  Serial.print(_address, HEX);
+  Serial.print(", address: 0x");
+  printOneByte((uint8_t)reg);
+  Serial.print(", received: 0x");
+  printOneByte((uint8_t)value);
+  Serial.println(" ");
+#endif
   return value;
 }
 
@@ -882,6 +916,18 @@ bool Adafruit_BNO055::readLen(adafruit_bno055_reg_t reg, byte *buffer,
     buffer[i] = _wire->receive();
 #endif
   }
+
+#if PRINT_DATA
+  Serial.print("Read from ");
+  Serial.print(_address, HEX);
+  Serial.print(", address: 0x");
+  printOneByte((uint8_t)reg);
+  Serial.print(", received: ");
+  for (size_t ii = 0; ii < len; ++ii) {
+    printOneByte((uint8_t)buffer[ii]);
+  }
+  Serial.println(" ");
+#endif
 
   /* ToDo: Check for errors! */
   return true;

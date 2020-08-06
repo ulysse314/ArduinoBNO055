@@ -66,6 +66,7 @@ void setup(void)
   Serial.begin(115200);
   Serial.println("Orientation Sensor Test"); Serial.println("");
 
+delay(10000);
   /* Initialise the sensor */
   if(!bno.begin())
   {
@@ -80,7 +81,7 @@ void setup(void)
   bno.setExtCrystalUse(true);
    
   /* Display some basic information on this sensor */
-  displaySensorDetails();
+//  displaySensorDetails();
 }
 
 /**************************************************************************/

@@ -39,6 +39,10 @@ void setup(void)
   Serial.begin(115200);
   Serial.println("Orientation Sensor Test"); Serial.println("");
 
+  for (int i = 0; i < 10; ++i) {
+    Serial.println(i);
+    delay(1000);
+  }
   /* Initialise the sensor */
   if (!bno.begin())
   {
@@ -87,6 +91,7 @@ void loop(void)
 
   Serial.println("--");
   delay(BNO055_SAMPLERATE_DELAY_MS);
+  delay(100000);
 }
 
 void printEvent(sensors_event_t* event) {
