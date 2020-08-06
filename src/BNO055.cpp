@@ -131,10 +131,7 @@ bool BNO055::begin(adafruit_bno055_opmode_t mode) {
   }
   delay(10);
   /* Set the requested operating mode (see section 3.3) */
-  bool result = setMode(mode);
-  delay(20);
-
-  return result;
+  return setMode(mode);
 }
 
 bool BNO055::checkChipID() {
@@ -190,15 +187,12 @@ bool BNO055::setAxisRemap(
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  delay(25);
   if (_busDevice->write8ToRegister(remapcode, BNO055_AXIS_MAP_CONFIG_ADDR) != 1) {
     return false;
   }
   delay(10);
   /* Set the requested operating mode (see section 3.3) */
-  bool result = setMode(modeback);
-  delay(20);
-  return result;
+  return setMode(modeback);
 }
 
 /*!
@@ -220,15 +214,12 @@ bool BNO055::setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign) {
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  delay(25);
   if (_busDevice->write8ToRegister(remapsign, BNO055_AXIS_MAP_SIGN_ADDR) != 1) {
     return false;
   }
   delay(10);
   /* Set the requested operating mode (see section 3.3) */
-  bool result = setMode(modeback);
-  delay(20);
-  return result;
+  return setMode(modeback);
 }
 
 /*!
@@ -243,7 +234,6 @@ bool BNO055::setExtCrystalUse(boolean usextal) {
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  delay(25);
   if (_busDevice->write8ToRegister(0, BNO055_PAGE_ID_ADDR) != 1) {
     return false;
   }
@@ -252,9 +242,7 @@ bool BNO055::setExtCrystalUse(boolean usextal) {
   }
   delay(10);
   /* Set the requested operating mode (see section 3.3) */
-  setMode(modeback);
-  delay(20);
-  return true;
+  return setMode(modeback);
 }
 
 /*!
@@ -514,11 +502,9 @@ bool BNO055::getSensorOffsets(
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-
   if (_busDevice->readArray16FromRegister((uint16_t *)offsets_type, sizeof(*offsets_type) / sizeof(offsets_type->accOffsetX), ACCEL_OFFSET_X_LSB_ADDR) != sizeof(*offsets_type)) {
     return false;
   }
-
   return setMode(lastMode);
 }
 
@@ -543,12 +529,9 @@ bool BNO055::setSensorOffsets(
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  delay(25);
-
   if (_busDevice->writeArray16ToRegister((uint16_t *)&offsets_type, sizeof(offsets_type) / sizeof(offsets_type.accOffsetX), ACCEL_OFFSET_X_LSB_ADDR) != sizeof(offsets_type)) {
     return false;
   }
-
   return setMode(lastMode);
 }
 
@@ -593,14 +576,11 @@ bool BNO055::enterSuspendMode() {
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  delay(25);
   if (_busDevice->write8ToRegister(0x02, BNO055_PWR_MODE_ADDR) != 1) {
     return false;
   }
   /* Set the requested operating mode (see section 3.3) */
-  bool result = setMode(modeback);
-  delay(20);
-  return result;
+  return setMode(modeback);
 }
 
 /*!
@@ -613,12 +593,9 @@ bool BNO055::enterNormalMode() {
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  delay(25);
   if (_busDevice->write8ToRegister(0, BNO055_PWR_MODE_ADDR) != 1) {
     return false;
   }
   /* Set the requested operating mode (see section 3.3) */
-  bool result = setMode(modeback);
-  delay(20);
-  return result;
+  return setMode(modeback);
 }
