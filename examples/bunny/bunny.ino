@@ -1,5 +1,4 @@
 #include <Wire.h>
-//#include <Adafruit_Sensor.h>
 #include <BNO055.h>
 #include <utility/imumaths.h>
 
@@ -32,32 +31,34 @@
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
-BNO055 bno = BNO055(55, 0x28);
+BNO055 bno(BNO055::Address::ToLow);
 
 /**************************************************************************/
 /*
     Arduino setup function (automatically called at startup)
 */
 /**************************************************************************/
-void setup(void)
+void setup()
 {
   Serial.begin(115200);
   Serial.println("Orientation Sensor Test"); Serial.println("");
-
-  /* Enable I2C */
   Wire.begin();
+
+  delay(10000);
+  Serial.println("ok");
+
   /* Initialise the sensor */
   if(!bno.begin())
   {
     /* There was a problem detecting the BNO055 ... check your connections */
-    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-    while(1);
+    while(1) {
+      delay(1000);
+      Serial.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+    }
   }
-   
-  delay(1000);
 
   /* Use external crystal for better accuracy */
-  bno.setExtCrystalUse(true);
+//  bno.setExtCrystalUse(true);
 }
 
 /**************************************************************************/
@@ -66,10 +67,11 @@ void setup(void)
     should go here)
 */
 /**************************************************************************/
-void loop(void)
+void loop()
 {
   /* Get a new sensor event */
-  imu::Vector<3> euler = bno.getVector(BNO055::VECTOR_EULER);
+  imu::Vector<3> orientation;
+  bno.getVector(BNO055::VECTOR_EULER, &orientation);
 
   /* Board layout:
          +----------+
@@ -84,11 +86,11 @@ void loop(void)
 
   /* The processing sketch expects data as roll, pitch, heading */
   Serial.print(F("Orientation: "));
-  Serial.print((float)euler.x());
+  Serial.print(orientation[0]);
   Serial.print(F(" "));
-  Serial.print((float)euler.y());
+  Serial.print(orientation[1]);
   Serial.print(F(" "));
-  Serial.print((float)euler.z());
+  Serial.print(orientation[2]);
   Serial.println(F(""));
 
   /* Also send calibration data for each sensor. */
