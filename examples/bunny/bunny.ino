@@ -58,7 +58,7 @@ void setup()
   }
 
   /* Use external crystal for better accuracy */
-//  bno.setExtCrystalUse(true);
+  bno.setExtCrystalUse(true);
 }
 
 /**************************************************************************/
