@@ -57,12 +57,12 @@ void loop(void)
     BNO055::adafruit_vector_type_t type;
     const char *name;
   } vectorTypes[] = {
-    { BNO055::VECTOR_EULER, "Euler" },
-    { BNO055::VECTOR_GYROSCOPE, "Gyro" },
-    { BNO055::VECTOR_LINEARACCEL, "Linear" },
-    { BNO055::VECTOR_ACCELEROMETER, "Accel" },
-    { BNO055::VECTOR_MAGNETOMETER, "Mag" },
-    { BNO055::VECTOR_GRAVITY, "Grav" },
+    { BNO055::VECTOR_EULER,         "Euler " },
+    { BNO055::VECTOR_GYROSCOPE,     "Gyro  " },
+    { BNO055::VECTOR_LINEARACCEL,   "Linear" },
+    { BNO055::VECTOR_ACCELEROMETER, "Accel " },
+    { BNO055::VECTOR_MAGNETOMETER,  "Mag   " },
+    { BNO055::VECTOR_GRAVITY,       "Grav  " },
   };
   for (size_t ii = 0; ii < sizeof(vectorTypes) / sizeof(vectorTypes[0]); ++ii) {
     imu::Vector<3> vector;
@@ -71,9 +71,9 @@ void loop(void)
     if (bno.getVector(vectorTypes[ii].type, &vector)) {
       Serial.print("x= ");
       Serial.print(vector[0]);
-      Serial.print(" | y= ");
+      Serial.print(" |\ty= ");
       Serial.print(vector[1]);
-      Serial.print(" | z= ");
+      Serial.print(" |\tz= ");
       Serial.println(vector[2]);
     } else {
       Serial.println("failure");
