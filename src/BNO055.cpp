@@ -412,7 +412,7 @@ bool BNO055::setTemperatureSource(TemperatureSource source) {
  *            VECTOR_GRAVITY]
  *  @return  vector from specified source
  */
-bool BNO055::getVector(adafruit_vector_type_t vector_type, imu::Vector<3> *xyz) {
+bool BNO055::getVector(Vector vector_type, imu::Vector<3> *xyz) {
   int16_t buffer[3];
 
   /* Read vector data */
@@ -429,27 +429,27 @@ bool BNO055::getVector(adafruit_vector_type_t vector_type, imu::Vector<3> *xyz) 
    */
   double coef = 1.0;
   switch (vector_type) {
-  case VECTOR_MAGNETOMETER:
+  case Vector::Magnetometer:
     /* 1uT = 16 LSB */
     coef = 16.0;
     break;
-  case VECTOR_GYROSCOPE:
+  case Vector::Gyroscope:
     /* 1dps = 16 LSB */
     coef = 16.0;
     break;
-  case VECTOR_EULER:
+  case Vector::Euler:
     /* 1 degree = 16 LSB */
     coef = 16.0;
     break;
-  case VECTOR_ACCELEROMETER:
+  case Vector::Accelerometer:
     /* 1m/s^2 = 100 LSB */
     coef = 100.0;
     break;
-  case VECTOR_LINEARACCEL:
+  case Vector::LinearAccelerometer:
     /* 1m/s^2 = 100 LSB */
     coef = 100.0;
     break;
-  case VECTOR_GRAVITY:
+  case Vector::Gravity:
     /* 1m/s^2 = 100 LSB */
     coef = 100.0;
     break;

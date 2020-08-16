@@ -52,23 +52,22 @@ void setup(void)
 
 void loop(void)
 {
-  //could add VECTOR_ACCELEROMETER, VECTOR_MAGNETOMETER,VECTOR_GRAVITY...
   struct {
-    BNO055::adafruit_vector_type_t type;
+    BNO055::Vector vector;
     const char *name;
   } vectorTypes[] = {
-    { BNO055::VECTOR_EULER,         "Euler " },
-    { BNO055::VECTOR_GYROSCOPE,     "Gyro  " },
-    { BNO055::VECTOR_LINEARACCEL,   "Linear" },
-    { BNO055::VECTOR_ACCELEROMETER, "Accel " },
-    { BNO055::VECTOR_MAGNETOMETER,  "Mag   " },
-    { BNO055::VECTOR_GRAVITY,       "Grav  " },
+    { BNO055::Vector::Euler,                 "Euler " },
+    { BNO055::Vector::Gyroscope,             "Gyro  " },
+    { BNO055::Vector::LinearAccelerometer,   "Linear" },
+    { BNO055::Vector::Accelerometer,         "Accel " },
+    { BNO055::Vector::Magnetometer,          "Mag   " },
+    { BNO055::Vector::Gravity,               "Grav  " },
   };
   for (size_t ii = 0; ii < sizeof(vectorTypes) / sizeof(vectorTypes[0]); ++ii) {
     imu::Vector<3> vector;
     Serial.print(vectorTypes[ii].name);
     Serial.print(": ");
-    if (bno.getVector(vectorTypes[ii].type, &vector)) {
+    if (bno.getVector(vectorTypes[ii].vector, &vector)) {
       Serial.print("x= ");
       Serial.print(vector[0]);
       Serial.print(" |\ty= ");

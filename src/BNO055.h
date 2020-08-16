@@ -267,14 +267,14 @@ public:
   } adafruit_bno055_rev_info_t;
 
   /** Vector Mappings **/
-  typedef enum {
-    VECTOR_ACCELEROMETER = BNO055_ACCEL_DATA_X_LSB_ADDR,
-    VECTOR_MAGNETOMETER = BNO055_MAG_DATA_X_LSB_ADDR,
-    VECTOR_GYROSCOPE = BNO055_GYRO_DATA_X_LSB_ADDR,
-    VECTOR_EULER = BNO055_EULER_H_LSB_ADDR,
-    VECTOR_LINEARACCEL = BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR,
-    VECTOR_GRAVITY = BNO055_GRAVITY_DATA_X_LSB_ADDR
-  } adafruit_vector_type_t;
+  enum class Vector {
+    Accelerometer = BNO055_ACCEL_DATA_X_LSB_ADDR,
+    Magnetometer = BNO055_MAG_DATA_X_LSB_ADDR,
+    Gyroscope = BNO055_GYRO_DATA_X_LSB_ADDR,
+    Euler = BNO055_EULER_H_LSB_ADDR,
+    LinearAccelerometer = BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR,
+    Gravity = BNO055_GRAVITY_DATA_X_LSB_ADDR
+  };
 
   BNO055(Address address = Address::ToLow, TwoWire *theWire = &Wire);
 
@@ -290,7 +290,7 @@ public:
   bool getCalibration(uint8_t *system, uint8_t *gyro, uint8_t *accel,
                       uint8_t *mag);
 
-  bool getVector(adafruit_vector_type_t vector_type, imu::Vector<3> *xyz);
+  bool getVector(Vector vector_type, imu::Vector<3> *xyz);
   bool getQuat(imu::Quaternion *quat);
 
   bool getTemperature(int8_t *temp);
