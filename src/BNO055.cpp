@@ -46,91 +46,91 @@ enum class BNO055RegisterAddress {
   MagnetometerRevisionID = 0x02,
   GyroscopeRevisionID = 0x03,
   SoftwareRevisionID = 0x04, // 2 bytes
-  BootloaderRevisionID = 0X06,
+  BootloaderRevisionID = 0x06,
 
   /* Page id register definition */
-  PageID = 0X07,
+  PageID = 0x07,
 
   /* Accel data register */
-  AccelerometerDataX = 0X08, // 2 bytes
-  AccelerometerDataY = 0X0A, // 2 bytes
-  AccelerometerDataZ = 0X0C, // 2 bytes
+  AccelerometerDataX = 0x08, // 2 bytes
+  AccelerometerDataY = 0x0A, // 2 bytes
+  AccelerometerDataZ = 0x0C, // 2 bytes
 
   /* Mag data register */
-  MagnetometerDataX = 0X0E, // 2 bytes
-  MagnetometerDataY = 0X10, // 2 bytes
-  MagnetometerDataZ = 0X12, // 2 bytes
+  MagnetometerDataX = 0x0E, // 2 bytes
+  MagnetometerDataY = 0x10, // 2 bytes
+  MagnetometerDataZ = 0x12, // 2 bytes
 
   /* Gyro data registers */
-  GyroscopeDataX = 0X14, // 2 bytes
-  GyroscopeDataY = 0X16, // 2 bytes
-  GyroscopeDataZ = 0X18, // 2 bytes
+  GyroscopeDataX = 0x14, // 2 bytes
+  GyroscopeDataY = 0x16, // 2 bytes
+  GyroscopeDataZ = 0x18, // 2 bytes
 
   /* Euler data registers */
-  EulerDataH = 0X1A, // 2 bytes
-  EulerDataR = 0X1C, // 2 bytes
-  EulerDataP = 0X1E, // 2 bytes
+  EulerDataH = 0x1A, // 2 bytes
+  EulerDataR = 0x1C, // 2 bytes
+  EulerDataP = 0x1E, // 2 bytes
 
   /* Quaternion data registers */
-  QuaternionDataW = 0X20, // 2 bytes
-  QuaternionDataX = 0X23, // 2 bytes
-  QuaternionDataY = 0X24, // 2 bytes
-  QuaternionDataZ = 0X26, // 2 bytes
+  QuaternionDataW = 0x20, // 2 bytes
+  QuaternionDataX = 0x23, // 2 bytes
+  QuaternionDataY = 0x24, // 2 bytes
+  QuaternionDataZ = 0x26, // 2 bytes
 
   /* Linear acceleration data registers */
-  LinearAccelerometerDataX = 0X28, // 2 bytes
-  LinearAccelerometerDataY = 0X2A, // 2 bytes
-  LinearAccelerometerDataZ = 0X2C, // 2 bytes
+  LinearAccelerometerDataX = 0x28, // 2 bytes
+  LinearAccelerometerDataY = 0x2A, // 2 bytes
+  LinearAccelerometerDataZ = 0x2C, // 2 bytes
 
   /* Gravity data registers */
-  GravityDataX = 0X2E, // 2 bytes
-  GravityDataY = 0X30, // 2 bytes
-  GravityDataZ = 0X32, // 2 bytes
+  GravityDataX = 0x2E, // 2 bytes
+  GravityDataY = 0x30, // 2 bytes
+  GravityDataZ = 0x32, // 2 bytes
 
   /* Temperature data register */
-  Temperature = 0X34,
+  Temperature = 0x34,
 
   /* Status registers */
-  CalibrationStatus = 0X35,
-  SelfTestResult = 0X36,
-  InterruptStatus = 0X37,
+  CalibrationStatus = 0x35,
+  SelfTestResult = 0x36,
+  InterruptStatus = 0x37,
 
-  SystemClockStatus = 0X38,
-  SystemStatus = 0X39,
-  SystemError = 0X3A,
+  SystemClockStatus = 0x38,
+  SystemStatus = 0x39,
+  SystemError = 0x3A,
 
   /* Unit selection register */
-  UnitSelection = 0X3B,
+  UnitSelection = 0x3B,
 
   /* Mode registers */
-  OperationMode = 0X3D,
-  PowerMode = 0X3E,
+  OperationMode = 0x3D,
+  PowerMode = 0x3E,
 
-  SystemTrigger = 0X3F,
-  TemperatureSource = 0X40,
+  SystemTrigger = 0x3F,
+  TemperatureSource = 0x40,
 
   /* Axis remap registers */
-  AxisMapConfig = 0X41,
-  AxisMapSign = 0X42,
+  AxisMapConfig = 0x41,
+  AxisMapSign = 0x42,
 
   /* Accelerometer Offset registers */
-  AccelerometerOffsetX = 0X55, // 2 bytes
-  AccelerometerOffsetY = 0X57, // 2 bytes
-  AccelerometerOffsetZ = 0X59, // 2 bytes
+  AccelerometerOffsetX = 0x55, // 2 bytes
+  AccelerometerOffsetY = 0x57, // 2 bytes
+  AccelerometerOffsetZ = 0x59, // 2 bytes
 
   /* Magnetometer Offset registers */
-  MagnetometerOffsetX = 0X5B, // 2 bytes
-  MagnetometerOffsetY = 0X5D, // 2 bytes
-  MagnetometerOffsetZ = 0X5F, // 2 bytes
+  MagnetometerOffsetX = 0x5B, // 2 bytes
+  MagnetometerOffsetY = 0x5D, // 2 bytes
+  MagnetometerOffsetZ = 0x5F, // 2 bytes
 
   /* Gyroscope Offset register s*/
-  GyroscopeOffsetX = 0X61, // 2 bytes
-  GyroscopeOffsetY = 0X63, // 2 bytes
-  GyroscopeOffsetZ = 0X65, // 2 bytes
+  GyroscopeOffsetX = 0x61, // 2 bytes
+  GyroscopeOffsetY = 0x63, // 2 bytes
+  GyroscopeOffsetZ = 0x65, // 2 bytes
 
   /* Radius registers */
-  AccelerometerRadius = 0X67, // 2 bytes
-  MagnetometerRadius = 0X69, // 2 bytes
+  AccelerometerRadius = 0x67, // 2 bytes
+  MagnetometerRadius = 0x69, // 2 bytes
 };
 
 namespace {
