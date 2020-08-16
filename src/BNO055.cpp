@@ -246,7 +246,7 @@ bool BNO055::begin(OperationMode mode) {
   /*
   write8((uint8_t)BNO055RegisterAddress::AxisMapConfig, REMAP_CONFIG_P2); // P0-P7, Default is P1
   delay(10);
-  write8((uint8_t)BNO055RegisterAddress::AxisMapSign, REMAP_SIGN_P2); // P0-P7, Default is P1
+  write8((uint8_t)BNO055RegisterAddress::AxisMapSign, AxisRemapSign::P2); // P0-P7, Default is P1
   delay(10);
   */
 
@@ -295,23 +295,22 @@ bool BNO055::setMode(OperationMode mode) {
  *  @brief  Changes the chip's axis remap
  *  @param  remapcode
  *          remap code possible values
- *          [REMAP_CONFIG_P0
- *           REMAP_CONFIG_P1 (default)
- *           REMAP_CONFIG_P2
- *           REMAP_CONFIG_P3
- *           REMAP_CONFIG_P4
- *           REMAP_CONFIG_P5
- *           REMAP_CONFIG_P6
- *           REMAP_CONFIG_P7]
+ *          [AxisRemapConfig::P0
+ *           AxisRemapConfig::P1 (default)
+ *           AxisRemapConfig::P2
+ *           AxisRemapConfig::P3
+ *           AxisRemapConfig::P4
+ *           AxisRemapConfig::P5
+ *           AxisRemapConfig::P6
+ *           AxisRemapConfig::P7]
  */
-bool BNO055::setAxisRemap(
-    adafruit_bno055_axis_remap_config_t remapcode) {
+bool BNO055::setAxisRemap(AxisRemapConfig remapConfig) {
   OperationMode modeback = _mode;
 
   if (!setMode(OperationMode::Config)) {
     return false;
   }
-  if (_busDevice->write8ToRegister(remapcode, (uint8_t)BNO055RegisterAddress::AxisMapConfig) != 1) {
+  if (_busDevice->write8ToRegister((uint8_t)remapConfig, (uint8_t)BNO055RegisterAddress::AxisMapConfig) != 1) {
     return false;
   }
   delay(10);
@@ -323,22 +322,22 @@ bool BNO055::setAxisRemap(
  *  @brief  Changes the chip's axis signs
  *  @param  remapsign
  *          remap sign possible values
- *          [REMAP_SIGN_P0
- *           REMAP_SIGN_P1 (default)
- *           REMAP_SIGN_P2
- *           REMAP_SIGN_P3
- *           REMAP_SIGN_P4
- *           REMAP_SIGN_P5
- *           REMAP_SIGN_P6
- *           REMAP_SIGN_P7]
+ *          [AxisRemapSign::P0
+ *           AxisRemapSign::P1 (default)
+ *           AxisRemapSign::P2
+ *           AxisRemapSign::P3
+ *           AxisRemapSign::P4
+ *           AxisRemapSign::P5
+ *           AxisRemapSign::P6
+ *           AxisRemapSign::P7]
  */
-bool BNO055::setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign) {
+bool BNO055::setAxisSign(AxisRemapSign remapSign) {
   OperationMode modeback = _mode;
 
   if (!setMode(OperationMode::Config)) {
     return false;
   }
-  if (_busDevice->write8ToRegister(remapsign, (uint8_t)BNO055RegisterAddress::AxisMapSign) != 1) {
+  if (_busDevice->write8ToRegister((uint8_t)remapSign, (uint8_t)BNO055RegisterAddress::AxisMapSign) != 1) {
     return false;
   }
   delay(10);

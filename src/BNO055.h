@@ -77,28 +77,28 @@ public:
   };
 
   /** Remap settings **/
-  typedef enum {
-    REMAP_CONFIG_P0 = 0x21,
-    REMAP_CONFIG_P1 = 0x24, // default
-    REMAP_CONFIG_P2 = 0x24,
-    REMAP_CONFIG_P3 = 0x21,
-    REMAP_CONFIG_P4 = 0x24,
-    REMAP_CONFIG_P5 = 0x21,
-    REMAP_CONFIG_P6 = 0x21,
-    REMAP_CONFIG_P7 = 0x24
-  } adafruit_bno055_axis_remap_config_t;
+  enum class AxisRemapConfig {
+    P0 = 0x21,
+    P1 = 0x24, // default
+    P2 = 0x24,
+    P3 = 0x21,
+    P4 = 0x24,
+    P5 = 0x21,
+    P6 = 0x21,
+    P7 = 0x24
+  };
 
   /** Remap Signs **/
-  typedef enum {
-    REMAP_SIGN_P0 = 0x04,
-    REMAP_SIGN_P1 = 0x00, // default
-    REMAP_SIGN_P2 = 0x06,
-    REMAP_SIGN_P3 = 0x02,
-    REMAP_SIGN_P4 = 0x03,
-    REMAP_SIGN_P5 = 0x01,
-    REMAP_SIGN_P6 = 0x07,
-    REMAP_SIGN_P7 = 0x05
-  } adafruit_bno055_axis_remap_sign_t;
+  enum class AxisRemapSign {
+    P0 = 0x04,
+    P1 = 0x00, // default
+    P2 = 0x06,
+    P3 = 0x02,
+    P4 = 0x03,
+    P5 = 0x01,
+    P6 = 0x07,
+    P7 = 0x05
+  };
 
   /** A structure to represent revisions **/
   typedef struct {
@@ -124,8 +124,8 @@ public:
   bool begin(OperationMode mode = OperationMode::NineDegreesOfFreedom);
   bool checkChipID();
   bool setMode(OperationMode mode);
-  bool setAxisRemap(adafruit_bno055_axis_remap_config_t remapcode);
-  bool setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign);
+  bool setAxisRemap(AxisRemapConfig remapcode);
+  bool setAxisSign(AxisRemapSign remapsign);
   bool getRevInfo(adafruit_bno055_rev_info_t *);
   bool setExtCrystalUse(boolean usextal);
   bool getSystemStatus(uint8_t *system_status, uint8_t *self_test_result,
