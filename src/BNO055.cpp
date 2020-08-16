@@ -35,8 +35,8 @@
 #include <math.h>
 #include <I2CDevice.h>
 
-/** BNO055 CHIP ID **/
-#define BNO055_CHIP_ID (0xA0)
+/** CHIP ID **/
+#define CHIP_ID (0xA0)
 
 /*!
  *  @brief  Instantiates a new BNO055 class
@@ -139,7 +139,7 @@ bool BNO055::checkChipID() {
   if (_busDevice->read8FromRegister(&value, BNO055_CHIP_ID_ADDR) != 1) {
     return false;
   }
-  return BNO055_CHIP_ID == value;
+  return CHIP_ID == value;
 }
 
 /*!
