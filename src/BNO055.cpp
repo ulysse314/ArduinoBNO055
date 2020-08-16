@@ -38,6 +38,123 @@
 /** CHIP ID **/
 #define CHIP_ID (0xA0)
 
+/** BNO055 Registers **/
+enum class BNO055RegisterAddress {
+  /* PAGE0 REGISTER DEFINITION START*/
+  ChipID = 0x00,
+  AccelerometerRevisionID = 0x01,
+  MagnetometerRevisionID = 0x02,
+  GyroscopeRevisionID = 0x03,
+  SoftwareRevisionID = 0x04, // 2 bytes
+  BootloaderRevisionID = 0X06,
+
+  /* Page id register definition */
+  PageID = 0X07,
+
+  /* Accel data register */
+  AccelerometerDataX = 0X08, // 2 bytes
+  AccelerometerDataY = 0X0A, // 2 bytes
+  AccelerometerDataZ = 0X0C, // 2 bytes
+
+  /* Mag data register */
+  MagnetometerDataX = 0X0E, // 2 bytes
+  MagnetometerDataY = 0X10, // 2 bytes
+  MagnetometerDataZ = 0X12, // 2 bytes
+
+  /* Gyro data registers */
+  GyroscopeDataX = 0X14, // 2 bytes
+  GyroscopeDataY = 0X16, // 2 bytes
+  GyroscopeDataZ = 0X18, // 2 bytes
+
+  /* Euler data registers */
+  EulerDataH = 0X1A, // 2 bytes
+  EulerDataR = 0X1C, // 2 bytes
+  EulerDataP = 0X1E, // 2 bytes
+
+  /* Quaternion data registers */
+  QuaternionDataW = 0X20, // 2 bytes
+  QuaternionDataX = 0X23, // 2 bytes
+  QuaternionDataY = 0X24, // 2 bytes
+  QuaternionDataZ = 0X26, // 2 bytes
+
+  /* Linear acceleration data registers */
+  LinearAccelerometerDataX = 0X28, // 2 bytes
+  LinearAccelerometerDataY = 0X2A, // 2 bytes
+  LinearAccelerometerDataZ = 0X2C, // 2 bytes
+
+  /* Gravity data registers */
+  GravityDataX = 0X2E, // 2 bytes
+  GravityDataY = 0X30, // 2 bytes
+  GravityDataZ = 0X32, // 2 bytes
+
+  /* Temperature data register */
+  Temperature = 0X34,
+
+  /* Status registers */
+  CalibrationStatus = 0X35,
+  SelfTestResult = 0X36,
+  InterruptStatus = 0X37,
+
+  SystemClockStatus = 0X38,
+  SystemStatus = 0X39,
+  SystemError = 0X3A,
+
+  /* Unit selection register */
+  UnitSelection = 0X3B,
+
+  /* Mode registers */
+  OperationMode = 0X3D,
+  PowerMode = 0X3E,
+
+  SystemTrigger = 0X3F,
+  TemperatureSource = 0X40,
+
+  /* Axis remap registers */
+  AxisMapConfig = 0X41,
+  AxisMapSign = 0X42,
+
+  /* Accelerometer Offset registers */
+  AccelerometerOffsetX = 0X55, // 2 bytes
+  AccelerometerOffsetY = 0X57, // 2 bytes
+  AccelerometerOffsetZ = 0X59, // 2 bytes
+
+  /* Magnetometer Offset registers */
+  MagnetometerOffsetX = 0X5B, // 2 bytes
+  MagnetometerOffsetY = 0X5D, // 2 bytes
+  MagnetometerOffsetZ = 0X5F, // 2 bytes
+
+  /* Gyroscope Offset register s*/
+  GyroscopeOffsetX = 0X61, // 2 bytes
+  GyroscopeOffsetY = 0X63, // 2 bytes
+  GyroscopeOffsetZ = 0X65, // 2 bytes
+
+  /* Radius registers */
+  AccelerometerRadius = 0X67, // 2 bytes
+  MagnetometerRadius = 0X69, // 2 bytes
+};
+
+namespace {
+
+BNO055RegisterAddress RegisterAddressForVector(BNO055::Vector vector) {
+  switch (vector) {
+  case BNO055::Vector::Accelerometer:
+    return BNO055RegisterAddress::AccelerometerDataX;
+  case BNO055::Vector::Magnetometer:
+    return BNO055RegisterAddress::AccelerometerDataZ;
+  case BNO055::Vector::Gyroscope:
+    return BNO055RegisterAddress::GyroscopeDataX;
+  case BNO055::Vector::Euler:
+    return BNO055RegisterAddress::EulerDataH;
+  case BNO055::Vector::LinearAccelerometer:
+    return BNO055RegisterAddress::LinearAccelerometerDataX;
+  case BNO055::Vector::Gravity:
+    return BNO055RegisterAddress::GravityDataX;
+  }
+  return BNO055RegisterAddress::AccelerometerDataX;
+}
+
+}
+
 /*!
  *  @brief  Instantiates a new BNO055 class
  *  @param  address
@@ -88,7 +205,7 @@ bool BNO055::begin(adafruit_bno055_opmode_t mode) {
   }
 
   /* Reset */
-  if (_busDevice->write8ToRegister(0x20, BNO055_SYS_TRIGGER_ADDR) != 1) {
+  if (_busDevice->write8ToRegister(0x20, (uint8_t)BNO055RegisterAddress::SystemTrigger) != 1) {
     return false;
   }
   /* Delay incrased to 30ms due to power issues https://tinyurl.com/y375z699 */
@@ -99,12 +216,12 @@ bool BNO055::begin(adafruit_bno055_opmode_t mode) {
   delay(50);
 
   /* Set to normal power mode */
-  if (_busDevice->write8ToRegister(POWER_MODE_NORMAL, BNO055_PWR_MODE_ADDR) != 1) {
+  if (_busDevice->write8ToRegister(POWER_MODE_NORMAL, (uint8_t)BNO055RegisterAddress::PowerMode) != 1) {
     return false;
   }
   delay(10);
 
-  if (_busDevice->write8ToRegister(0, BNO055_PAGE_ID_ADDR) != 1) {
+  if (_busDevice->write8ToRegister(0, (uint8_t)BNO055RegisterAddress::PageID) != 1) {
     return false;
   }
 
@@ -115,18 +232,18 @@ bool BNO055::begin(adafruit_bno055_opmode_t mode) {
                     (0 << 2) | // Euler = Degrees
                     (1 << 1) | // Gyro = Rads
                     (0 << 0);  // Accelerometer = m/s^2
-  write8(BNO055_UNIT_SEL_ADDR, unitsel);
+  write8((uint8_t)BNO055RegisterAddress::UnitSelection, unitsel);
   */
 
   /* Configure axis mapping (see section 3.4) */
   /*
-  write8(BNO055_AXIS_MAP_CONFIG_ADDR, REMAP_CONFIG_P2); // P0-P7, Default is P1
+  write8((uint8_t)BNO055RegisterAddress::AxisMapConfig, REMAP_CONFIG_P2); // P0-P7, Default is P1
   delay(10);
-  write8(BNO055_AXIS_MAP_SIGN_ADDR, REMAP_SIGN_P2); // P0-P7, Default is P1
+  write8((uint8_t)BNO055RegisterAddress::AxisMapSign, REMAP_SIGN_P2); // P0-P7, Default is P1
   delay(10);
   */
 
-  if (_busDevice->write8ToRegister(0, BNO055_SYS_TRIGGER_ADDR) != 1) {
+  if (_busDevice->write8ToRegister(0, (uint8_t)BNO055RegisterAddress::SystemTrigger) != 1) {
     return false;
   }
   delay(10);
@@ -136,7 +253,7 @@ bool BNO055::begin(adafruit_bno055_opmode_t mode) {
 
 bool BNO055::checkChipID() {
   uint8_t value;
-  if (_busDevice->read8FromRegister(&value, BNO055_CHIP_ID_ADDR) != 1) {
+  if (_busDevice->read8FromRegister(&value, (uint8_t)BNO055RegisterAddress::ChipID) != 1) {
     return false;
   }
   return CHIP_ID == value;
@@ -162,7 +279,7 @@ bool BNO055::checkChipID() {
  */
 bool BNO055::setMode(adafruit_bno055_opmode_t mode) {
   _mode = mode;
-  bool result = _busDevice->write8ToRegister(_mode, BNO055_OPR_MODE_ADDR) == 1;
+  bool result = _busDevice->write8ToRegister(_mode, (uint8_t)BNO055RegisterAddress::OperationMode) == 1;
   delay(30);
   return result;
 }
@@ -187,7 +304,7 @@ bool BNO055::setAxisRemap(
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  if (_busDevice->write8ToRegister(remapcode, BNO055_AXIS_MAP_CONFIG_ADDR) != 1) {
+  if (_busDevice->write8ToRegister(remapcode, (uint8_t)BNO055RegisterAddress::AxisMapConfig) != 1) {
     return false;
   }
   delay(10);
@@ -214,7 +331,7 @@ bool BNO055::setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign) {
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  if (_busDevice->write8ToRegister(remapsign, BNO055_AXIS_MAP_SIGN_ADDR) != 1) {
+  if (_busDevice->write8ToRegister(remapsign, (uint8_t)BNO055RegisterAddress::AxisMapSign) != 1) {
     return false;
   }
   delay(10);
@@ -234,10 +351,10 @@ bool BNO055::setExtCrystalUse(boolean usextal) {
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  if (_busDevice->write8ToRegister(0, BNO055_PAGE_ID_ADDR) != 1) {
+  if (_busDevice->write8ToRegister(0, (uint8_t)BNO055RegisterAddress::PageID) != 1) {
     return false;
   }
-  if (_busDevice->write8ToRegister(usextal ? 0x80 : 0x00, BNO055_SYS_TRIGGER_ADDR) != 1) {
+  if (_busDevice->write8ToRegister(usextal ? 0x80 : 0x00, (uint8_t)BNO055RegisterAddress::SystemTrigger) != 1) {
     return false;
   }
   delay(10);
@@ -257,7 +374,7 @@ bool BNO055::setExtCrystalUse(boolean usextal) {
 bool BNO055::getSystemStatus(uint8_t *system_status,
                                       uint8_t *self_test_result,
                                       uint8_t *system_error) {
-  if (_busDevice->write8ToRegister(0, BNO055_PAGE_ID_ADDR) != 1) {
+  if (_busDevice->write8ToRegister(0, (uint8_t)BNO055RegisterAddress::PageID) != 1) {
     return false;
   }
 
@@ -272,7 +389,7 @@ bool BNO055::getSystemStatus(uint8_t *system_status,
    */
 
   if (system_status != 0) {
-    size_t count = _busDevice->read8FromRegister(system_status, BNO055_SYS_STAT_ADDR);
+    size_t count = _busDevice->read8FromRegister(system_status, (uint8_t)BNO055RegisterAddress::SystemStatus);
     if (count != 1) {
       return false;
     }
@@ -290,7 +407,7 @@ bool BNO055::getSystemStatus(uint8_t *system_status,
    */
 
   if (self_test_result != 0) {
-    size_t count = _busDevice->read8FromRegister(self_test_result, BNO055_SELFTEST_RESULT_ADDR);
+    size_t count = _busDevice->read8FromRegister(self_test_result, (uint8_t)BNO055RegisterAddress::SelfTestResult);
     if (count != 1) {
       return false;
     }
@@ -311,7 +428,7 @@ bool BNO055::getSystemStatus(uint8_t *system_status,
    */
 
   if (system_error != 0) {
-    size_t count = _busDevice->read8FromRegister(self_test_result, BNO055_SYS_ERR_ADDR);
+    size_t count = _busDevice->read8FromRegister(self_test_result, (uint8_t)BNO055RegisterAddress::SystemError);
     if (count != 1) {
       return false;
     }
@@ -330,26 +447,26 @@ bool BNO055::getRevInfo(adafruit_bno055_rev_info_t *info) {
   memset(info, 0, sizeof(adafruit_bno055_rev_info_t));
 
   /* Check the accelerometer revision */
-  if (_busDevice->read8FromRegister(&(info->accel_rev), BNO055_ACCEL_REV_ID_ADDR) != 1) {
+  if (_busDevice->read8FromRegister(&(info->accel_rev), (uint8_t)BNO055RegisterAddress::AccelerometerRevisionID) != 1) {
     return false;
   }
 
   /* Check the magnetometer revision */
-  if (_busDevice->read8FromRegister(&(info->mag_rev), BNO055_MAG_REV_ID_ADDR) != 1) {
+  if (_busDevice->read8FromRegister(&(info->mag_rev), (uint8_t)BNO055RegisterAddress::MagnetometerRevisionID) != 1) {
     return false;
   }
 
   /* Check the gyroscope revision */
-  if (_busDevice->read8FromRegister(&(info->gyro_rev), BNO055_GYRO_REV_ID_ADDR) != 1) {
+  if (_busDevice->read8FromRegister(&(info->gyro_rev), (uint8_t)BNO055RegisterAddress::GyroscopeRevisionID) != 1) {
     return false;
   }
 
   /* Check the SW revision */
-  if (_busDevice->read8FromRegister(&(info->bl_rev), BNO055_BL_REV_ID_ADDR) != 1) {
+  if (_busDevice->read8FromRegister(&(info->bl_rev), (uint8_t)BNO055RegisterAddress::BootloaderRevisionID) != 1) {
     return false;
   }
 
-  return _busDevice->read16FromRegister(&(info->sw_rev), BNO055_SW_REV_ID_MSB_ADDR) != 1;
+  return _busDevice->read16FromRegister(&(info->sw_rev), (uint8_t)BNO055RegisterAddress::SoftwareRevisionID) != 1;
 }
 
 /*!
@@ -370,7 +487,7 @@ bool BNO055::getRevInfo(adafruit_bno055_rev_info_t *info) {
 bool BNO055::getCalibration(uint8_t *sys, uint8_t *gyro,
                                      uint8_t *accel, uint8_t *mag) {
   uint8_t calData;
-  if (_busDevice->read8FromRegister(&calData, BNO055_CALIB_STAT_ADDR) != 1) {
+  if (_busDevice->read8FromRegister(&calData, (uint8_t)BNO055RegisterAddress::CalibrationStatus) != 1) {
     return false;
   }
   if (sys != NULL) {
@@ -393,11 +510,11 @@ bool BNO055::getCalibration(uint8_t *sys, uint8_t *gyro,
  *  @return temperature in degrees celsius
  */
 bool BNO055::getTemperature(int8_t *temp) {
-  return _busDevice->read8FromRegister((uint8_t *)temp, BNO055_TEMP_ADDR) == 1;
+  return _busDevice->read8FromRegister((uint8_t *)temp, (uint8_t)BNO055RegisterAddress::Temperature) == 1;
 }
 
 bool BNO055::setTemperatureSource(TemperatureSource source) {
-  return _busDevice->write8ToRegister((uint8_t)source, BNO055_TEMP_SOURCE_ADDR) != 1;
+  return _busDevice->write8ToRegister((uint8_t)source, (uint8_t)BNO055RegisterAddress::TemperatureSource) != 1;
 }
 
 /*!
@@ -412,14 +529,15 @@ bool BNO055::setTemperatureSource(TemperatureSource source) {
  *            VECTOR_GRAVITY]
  *  @return  vector from specified source
  */
-bool BNO055::getVector(Vector vector_type, imu::Vector<3> *xyz) {
+bool BNO055::getVector(Vector vector, imu::Vector<3> *vectorData) {
   int16_t buffer[3];
 
   /* Read vector data */
-  if (_busDevice->readArray16FromRegister((uint16_t *)buffer, sizeof(buffer) / sizeof(buffer[0]), (uint8_t)vector_type) != sizeof(buffer)) {
+  BNO055RegisterAddress registerAddress = RegisterAddressForVector(vector);
+  if (_busDevice->readArray16FromRegister((uint16_t *)buffer, sizeof(buffer) / sizeof(buffer[0]), (uint8_t)registerAddress) != sizeof(buffer)) {
     return false;
   }
-  if (!xyz) {
+  if (!vectorData) {
     return true;
   }
 
@@ -428,7 +546,7 @@ bool BNO055::getVector(Vector vector_type, imu::Vector<3> *xyz) {
    * and assign the value to the Vector type
    */
   double coef = 1.0;
-  switch (vector_type) {
+  switch (vector) {
   case Vector::Magnetometer:
     /* 1uT = 16 LSB */
     coef = 16.0;
@@ -454,9 +572,9 @@ bool BNO055::getVector(Vector vector_type, imu::Vector<3> *xyz) {
     coef = 100.0;
     break;
   }
-  (*xyz)[0] = ((double)buffer[0]) / coef;
-  (*xyz)[1] = ((double)buffer[1]) / coef;
-  (*xyz)[2] = ((double)buffer[2]) / coef;
+  (*vectorData)[0] = ((double)buffer[0]) / coef;
+  (*vectorData)[1] = ((double)buffer[1]) / coef;
+  (*vectorData)[2] = ((double)buffer[2]) / coef;
 
   return true;
 }
@@ -469,7 +587,7 @@ bool BNO055::getQuat(imu::Quaternion *quat) {
   uint16_t buffer[4];
 
   /* Read quat data (8 bytes) */
-  if (_busDevice->readArray16FromRegister((uint16_t *)buffer, sizeof(buffer) / sizeof(buffer[0]), BNO055_QUATERNION_DATA_W_LSB_ADDR) != sizeof(buffer)) {
+  if (_busDevice->readArray16FromRegister((uint16_t *)buffer, sizeof(buffer) / sizeof(buffer[0]), (uint8_t)BNO055RegisterAddress::QuaternionDataW) != sizeof(buffer)) {
     return false;
   }
   if (!quat) {
@@ -502,7 +620,7 @@ bool BNO055::getSensorOffsets(
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  if (_busDevice->readArray16FromRegister((uint16_t *)offsets_type, sizeof(*offsets_type) / sizeof(offsets_type->accOffsetX), ACCEL_OFFSET_X_LSB_ADDR) != sizeof(*offsets_type)) {
+  if (_busDevice->readArray16FromRegister((uint16_t *)offsets_type, sizeof(*offsets_type) / sizeof(offsets_type->accOffsetX), (uint8_t)BNO055RegisterAddress::AccelerometerOffsetX) != sizeof(*offsets_type)) {
     return false;
   }
   return setMode(lastMode);
@@ -529,7 +647,7 @@ bool BNO055::setSensorOffsets(
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  if (_busDevice->writeArray16ToRegister((uint16_t *)&offsets_type, sizeof(offsets_type) / sizeof(offsets_type.accOffsetX), ACCEL_OFFSET_X_LSB_ADDR) != sizeof(offsets_type)) {
+  if (_busDevice->writeArray16ToRegister((uint16_t *)&offsets_type, sizeof(offsets_type) / sizeof(offsets_type.accOffsetX), (uint8_t)BNO055RegisterAddress::AccelerometerOffsetX) != sizeof(offsets_type)) {
     return false;
   }
   return setMode(lastMode);
@@ -576,7 +694,7 @@ bool BNO055::enterSuspendMode() {
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  if (_busDevice->write8ToRegister(0x02, BNO055_PWR_MODE_ADDR) != 1) {
+  if (_busDevice->write8ToRegister(0x02, (uint8_t)BNO055RegisterAddress::PowerMode) != 1) {
     return false;
   }
   /* Set the requested operating mode (see section 3.3) */
@@ -593,7 +711,7 @@ bool BNO055::enterNormalMode() {
   if (!setMode(OPERATION_MODE_CONFIG)) {
     return false;
   }
-  if (_busDevice->write8ToRegister(0, BNO055_PWR_MODE_ADDR) != 1) {
+  if (_busDevice->write8ToRegister(0, (uint8_t)BNO055RegisterAddress::PowerMode) != 1) {
     return false;
   }
   /* Set the requested operating mode (see section 3.3) */
