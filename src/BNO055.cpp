@@ -246,7 +246,7 @@ bool BNO055::begin(OperationMode mode) {
   /*
   write8((uint8_t)BNO055RegisterAddress::AxisMapConfig, REMAP_CONFIG_P2); // P0-P7, Default is P1
   delay(10);
-  write8((uint8_t)BNO055RegisterAddress::AxisMapSign, AxisRemapSign::P2); // P0-P7, Default is P1
+  write8((uint8_t)BNO055RegisterAddress::AxisMapSign, AxisSign::P2); // P0-P7, Default is P1
   delay(10);
   */
 
@@ -291,6 +291,68 @@ bool BNO055::setMode(OperationMode mode) {
   return result;
 }
 
+bool BNO055::setPlacementConfig(PlacementConfig placementConfig) {
+  AxisSign axisSign = AxisSign::PosXPosYPosZ;
+  Axis xAxis = Axis::XAxis;
+  Axis yAxis = Axis::YAxis;
+  Axis zAxis = Axis::ZAxis;
+  switch (placementConfig) {
+  case PlacementConfig::P0:
+    axisSign = AxisSign::PosXPosYPosZ;
+    xAxis = Axis::YAxis;
+    yAxis = Axis::XAxis;
+    zAxis = Axis::ZAxis;
+    break;
+  case PlacementConfig::P1:
+    axisSign = AxisSign::PosXPosYPosZ;
+    xAxis = Axis::XAxis;
+    yAxis = Axis::YAxis;
+    zAxis = Axis::ZAxis;
+    break;
+  case PlacementConfig::P2:
+    axisSign = AxisSign::PosXPosYPosZ;
+    xAxis = Axis::XAxis;
+    yAxis = Axis::YAxis;
+    zAxis = Axis::ZAxis;
+    break;
+  case PlacementConfig::P3:
+    axisSign = AxisSign::PosXPosYPosZ;
+    xAxis = Axis::YAxis;
+    yAxis = Axis::XAxis;
+    zAxis = Axis::ZAxis;
+    break;
+  case PlacementConfig::P4:
+    axisSign = AxisSign::PosXPosYPosZ;
+    xAxis = Axis::XAxis;
+    yAxis = Axis::YAxis;
+    zAxis = Axis::ZAxis;
+    break;
+  case PlacementConfig::P5:
+    axisSign = AxisSign::PosXPosYPosZ;
+    xAxis = Axis::YAxis;
+    yAxis = Axis::XAxis;
+    zAxis = Axis::ZAxis;
+    break;
+  case PlacementConfig::P6:
+    axisSign = AxisSign::PosXPosYPosZ;
+    xAxis = Axis::YAxis;
+    yAxis = Axis::XAxis;
+    zAxis = Axis::ZAxis;
+    break;
+  case PlacementConfig::P7:
+    axisSign = AxisSign::PosXPosYPosZ;
+    xAxis = Axis::XAxis;
+    yAxis = Axis::YAxis;
+    zAxis = Axis::ZAxis;
+    break;
+  };
+  bool result = setAxisRemap(xAxis, yAxis, zAxis);
+  if (!result) {
+    return result;
+  }
+  return setAxisSignRemap(axisSign);
+}
+
 /*!
  *  @brief  Changes the chip's axis remap
  *  @param  remapcode
@@ -304,13 +366,14 @@ bool BNO055::setMode(OperationMode mode) {
  *           AxisRemapConfig::P6
  *           AxisRemapConfig::P7]
  */
-bool BNO055::setAxisRemap(AxisRemapConfig remapConfig) {
+bool BNO055::setAxisRemap(Axis xAxis, Axis yAxis, Axis zAxis) {
   OperationMode modeback = _mode;
 
   if (!setMode(OperationMode::Config)) {
     return false;
   }
-  if (_busDevice->write8ToRegister((uint8_t)remapConfig, (uint8_t)BNO055RegisterAddress::AxisMapConfig) != 1) {
+  uint8_t remapConfig = ((uint8_t)zAxis << 4) + ((uint8_t)yAxis << 2) + (uint8_t)xAxis;
+  if (_busDevice->write8ToRegister(remapConfig, (uint8_t)BNO055RegisterAddress::AxisMapConfig) != 1) {
     return false;
   }
   delay(10);
@@ -322,16 +385,16 @@ bool BNO055::setAxisRemap(AxisRemapConfig remapConfig) {
  *  @brief  Changes the chip's axis signs
  *  @param  remapsign
  *          remap sign possible values
- *          [AxisRemapSign::P0
- *           AxisRemapSign::P1 (default)
- *           AxisRemapSign::P2
- *           AxisRemapSign::P3
- *           AxisRemapSign::P4
- *           AxisRemapSign::P5
- *           AxisRemapSign::P6
- *           AxisRemapSign::P7]
+ *          [AxisSign::P0
+ *           AxisSign::P1 (default)
+ *           AxisSign::P2
+ *           AxisSign::P3
+ *           AxisSign::P4
+ *           AxisSign::P5
+ *           AxisSign::P6
+ *           AxisSign::P7]
  */
-bool BNO055::setAxisSign(AxisRemapSign remapSign) {
+bool BNO055::setAxisSignRemap(AxisSign remapSign) {
   OperationMode modeback = _mode;
 
   if (!setMode(OperationMode::Config)) {

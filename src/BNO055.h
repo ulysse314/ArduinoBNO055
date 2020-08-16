@@ -77,27 +77,59 @@ public:
   };
 
   /** Remap settings **/
-  enum class AxisRemapConfig {
-    P0 = 0x21,
-    P1 = 0x24, // default
-    P2 = 0x24,
-    P3 = 0x21,
-    P4 = 0x24,
-    P5 = 0x21,
-    P6 = 0x21,
-    P7 = 0x24
+  enum class Axis {
+    XAxis = 0,
+    YAxis = 1,
+    ZAxis = 2,
   };
 
   /** Remap Signs **/
-  enum class AxisRemapSign {
-    P0 = 0x04,
-    P1 = 0x00, // default
-    P2 = 0x06,
-    P3 = 0x02,
-    P4 = 0x03,
-    P5 = 0x01,
-    P6 = 0x07,
-    P7 = 0x05
+  enum class AxisSign {
+    // 0: Positive X, Positive Y, Positive Z
+    PosXPosYPosZ = 0b000,
+    // 1: Positive X, Positive Y, Negative Z
+    PosXPosYNegZ = 0b001,
+    // 2: Positive X, Negative Y, Positive Z
+    PosXNegYPosZ = 0b010,
+    // 3: Positive X, Negative Y, Negative Z
+    PosXNegYNegZ = 0b011,
+    // 4: Negative X, Positive Y, Positive Z
+    NegXPosYPosZ = 0b100,
+    // 5: Negative X, Positive Y, Negative Z
+    NegXPosYNegZ = 0b101,
+    // 6: Negative X, Negative Y, Positive Z
+    NegXNegYPosZ = 0b110,
+    // 7: Negative X, Negative Y, Negative Z
+    NegXNegYNegZ = 0b111,
+  };
+
+  enum class PlacementConfig {
+    // Top view:
+    // NegXPosYPosZ, 0x21 (2,0,1), 0x04
+    // Z: +Z, Y: +X, X: -Y
+    P0,
+    // PosXPosYPosZ, 0x24 (2,1,0), 0x00
+    // Z: +Z, Y: +Y, X: +X
+    P1,
+    // NegXNegYPosZ, 0x24 (2,1,0), 0x06
+    // Z: +Z, Y: -Y, X: -X
+    P2,
+    // PosXNegYPosZ, 0x21 (2,0,1), 0x02
+    // Z: +Z, Y: -X, X: +Y
+    P3,
+    // Bottom view:
+    // PosXNegYNegZ, 0x24 (2,1,0), 0x03
+    // Z: -Z, Y: -Y, X: +X
+    P4,
+    // PosXPosYNegZ, 0x21 (2,0,1), 0x01
+    // Z: -Z, Y: +X, X: +Y
+    P5,
+    // NegXNegYNegZ, 0x21 (2,0,1), 0x07
+    // Z: -Z, Y: -X, X: -Y
+    P6,
+    // NegXNegYNegZ, 0x24 (2,1,0), 0x05
+    // Z: -Z, Y: -Y, X: -X
+    P7,
   };
 
   /** A structure to represent revisions **/
@@ -123,9 +155,12 @@ public:
 
   bool begin(OperationMode mode = OperationMode::NineDegreesOfFreedom);
   bool checkChipID();
+
   bool setMode(OperationMode mode);
-  bool setAxisRemap(AxisRemapConfig remapcode);
-  bool setAxisSign(AxisRemapSign remapsign);
+  bool setPlacementConfig(PlacementConfig placementConfig);
+  bool setAxisRemap(Axis xAxis, Axis yAxis, Axis zAxis);
+  bool setAxisSignRemap(AxisSign remapsign);
+
   bool getRevInfo(adafruit_bno055_rev_info_t *);
   bool setExtCrystalUse(boolean usextal);
   bool getSystemStatus(uint8_t *system_status, uint8_t *self_test_result,
