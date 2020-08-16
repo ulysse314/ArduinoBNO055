@@ -59,13 +59,6 @@ public:
     uint16_t magRadiusOffsetY;
   } OffsetValues;
 
-  /** BNO055 power settings */
-  typedef enum {
-    POWER_MODE_NORMAL = 0x00,
-    POWER_MODE_LOWPOWER = 0x01,
-    POWER_MODE_SUSPEND = 0x02
-  } adafruit_bno055_powermode_t;
-
   /** Operation mode settings **/
   typedef enum {
     OPERATION_MODE_CONFIG = 0x00,

@@ -133,6 +133,13 @@ enum class BNO055RegisterAddress {
   MagnetometerRadius = 0x69, // 2 bytes
 };
 
+/** BNO055 power settings */
+enum class BNO055PowerMode : uint8_t {
+  Normal = 0x00,
+  LowPower = 0x01,
+  Suspend = 0x02,
+};
+
 namespace {
 
 BNO055RegisterAddress RegisterAddressForVector(BNO055::Vector vector) {
@@ -216,7 +223,7 @@ bool BNO055::begin(adafruit_bno055_opmode_t mode) {
   delay(50);
 
   /* Set to normal power mode */
-  if (_busDevice->write8ToRegister(POWER_MODE_NORMAL, (uint8_t)BNO055RegisterAddress::PowerMode) != 1) {
+  if (_busDevice->write8ToRegister((uint8_t)BNO055PowerMode::Normal, (uint8_t)BNO055RegisterAddress::PowerMode) != 1) {
     return false;
   }
   delay(10);
