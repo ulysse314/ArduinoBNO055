@@ -177,22 +177,22 @@ BNO055::BNO055(Address address, TwoWire *wire) :
  *  @brief  Sets up the HW
  *  @param  mode
  *          mode values
- *           [OPERATION_MODE_CONFIG,
- *            OPERATION_MODE_ACCONLY,
- *            OPERATION_MODE_MAGONLY,
- *            OPERATION_MODE_GYRONLY,
- *            OPERATION_MODE_ACCMAG,
- *            OPERATION_MODE_ACCGYRO,
- *            OPERATION_MODE_MAGGYRO,
- *            OPERATION_MODE_AMG,
- *            OPERATION_MODE_IMUPLUS,
- *            OPERATION_MODE_COMPASS,
- *            OPERATION_MODE_M4G,
- *            OPERATION_MODE_NDOF_FMC_OFF,
- *            OPERATION_MODE_NDOF]
+ *           [OperationMode::Config,
+ *            OperationMode::AccelerometerOnly,
+ *            OperationMode::MagnetometerOnly,
+ *            OperationMode::GyroscopeOnly,
+ *            OperationMode::AccelerometerMagnetometer,
+ *            OperationMode::AccelerometerGyroscope,
+ *            OperationMode::MagnetometerGyroscope,
+ *            OperationMode::AccelerometerMagnetometerGyroscope,
+ *            OperationMode::InertialMeasurementUnit,
+ *            OperationMode::Compass,
+ *            OperationMode::MagnetometerForGyroscope,
+ *            OperationMode::NineDegreesOfFreedomFastMagnetometerCalibrationOff,
+ *            OperationMode::NineDegreesOfFreedom]
  *  @return true if process is successful
  */
-bool BNO055::begin(adafruit_bno055_opmode_t mode) {
+bool BNO055::begin(OperationMode mode) {
   // BNO055 clock stretches for 500us or more!
 #ifdef ESP8266
   _busDevice->getWire()->setClockStretchLimit(1000); // Allow for 1000us of clock stretching
@@ -207,7 +207,7 @@ bool BNO055::begin(adafruit_bno055_opmode_t mode) {
   }
 
   /* Switch to config mode (just in case since this is the default) */
-  if (!setMode(OPERATION_MODE_CONFIG)) {
+  if (!setMode(OperationMode::Config)) {
     return false;
   }
 
@@ -270,23 +270,23 @@ bool BNO055::checkChipID() {
  *  @brief  Puts the chip in the specified operating mode
  *  @param  mode
  *          mode values
- *           [OPERATION_MODE_CONFIG,
- *            OPERATION_MODE_ACCONLY,
- *            OPERATION_MODE_MAGONLY,
- *            OPERATION_MODE_GYRONLY,
- *            OPERATION_MODE_ACCMAG,
- *            OPERATION_MODE_ACCGYRO,
- *            OPERATION_MODE_MAGGYRO,
- *            OPERATION_MODE_AMG,
- *            OPERATION_MODE_IMUPLUS,
- *            OPERATION_MODE_COMPASS,
- *            OPERATION_MODE_M4G,
- *            OPERATION_MODE_NDOF_FMC_OFF,
- *            OPERATION_MODE_NDOF]
+ *           [OperationMode::Config,
+ *            OperationMode::AccelerometerOnly,
+ *            OperationMode::MagnetometerOnly,
+ *            OperationMode::GyroscopeOnly,
+ *            OperationMode::AccelerometerMagnetometer,
+ *            OperationMode::AccelerometerGyroscope,
+ *            OperationMode::MagnetometerGyroscope,
+ *            OperationMode::AccelerometerMagnetometerGyroscope,
+ *            OperationMode::InertialMeasurementUnit,
+ *            OperationMode::Compass,
+ *            OperationMode::MagnetometerForGyroscope,
+ *            OperationMode::NineDegreesOfFreedomFastMagnetometerCalibrationOff,
+ *            OperationMode::NineDegreesOfFreedom]
  */
-bool BNO055::setMode(adafruit_bno055_opmode_t mode) {
+bool BNO055::setMode(OperationMode mode) {
   _mode = mode;
-  bool result = _busDevice->write8ToRegister(_mode, (uint8_t)BNO055RegisterAddress::OperationMode) == 1;
+  bool result = _busDevice->write8ToRegister((uint8_t)_mode, (uint8_t)BNO055RegisterAddress::OperationMode) == 1;
   delay(30);
   return result;
 }
@@ -306,9 +306,9 @@ bool BNO055::setMode(adafruit_bno055_opmode_t mode) {
  */
 bool BNO055::setAxisRemap(
     adafruit_bno055_axis_remap_config_t remapcode) {
-  adafruit_bno055_opmode_t modeback = _mode;
+  OperationMode modeback = _mode;
 
-  if (!setMode(OPERATION_MODE_CONFIG)) {
+  if (!setMode(OperationMode::Config)) {
     return false;
   }
   if (_busDevice->write8ToRegister(remapcode, (uint8_t)BNO055RegisterAddress::AxisMapConfig) != 1) {
@@ -333,9 +333,9 @@ bool BNO055::setAxisRemap(
  *           REMAP_SIGN_P7]
  */
 bool BNO055::setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign) {
-  adafruit_bno055_opmode_t modeback = _mode;
+  OperationMode modeback = _mode;
 
-  if (!setMode(OPERATION_MODE_CONFIG)) {
+  if (!setMode(OperationMode::Config)) {
     return false;
   }
   if (_busDevice->write8ToRegister(remapsign, (uint8_t)BNO055RegisterAddress::AxisMapSign) != 1) {
@@ -352,10 +352,10 @@ bool BNO055::setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign) {
  *          use external crystal boolean
  */
 bool BNO055::setExtCrystalUse(boolean usextal) {
-  adafruit_bno055_opmode_t modeback = _mode;
+  OperationMode modeback = _mode;
 
   /* Switch to config mode (just in case since this is the default) */
-  if (!setMode(OPERATION_MODE_CONFIG)) {
+  if (!setMode(OperationMode::Config)) {
     return false;
   }
   if (_busDevice->write8ToRegister(0, (uint8_t)BNO055RegisterAddress::PageID) != 1) {
@@ -623,8 +623,8 @@ bool BNO055::getSensorOffsets(
   if (!isFullyCalibrated()) {
     return false;
   }
-  adafruit_bno055_opmode_t lastMode = _mode;
-  if (!setMode(OPERATION_MODE_CONFIG)) {
+  OperationMode lastMode = _mode;
+  if (!setMode(OperationMode::Config)) {
     return false;
   }
   if (_busDevice->readArray16FromRegister((uint16_t *)offsets_type, sizeof(*offsets_type) / sizeof(offsets_type->accOffsetX), (uint8_t)BNO055RegisterAddress::AccelerometerOffsetX) != sizeof(*offsets_type)) {
@@ -650,8 +650,8 @@ bool BNO055::getSensorOffsets(
  */
 bool BNO055::setSensorOffsets(
     OffsetValues offsets_type) {
-  adafruit_bno055_opmode_t lastMode = _mode;
-  if (!setMode(OPERATION_MODE_CONFIG)) {
+  OperationMode lastMode = _mode;
+  if (!setMode(OperationMode::Config)) {
     return false;
   }
   if (_busDevice->writeArray16ToRegister((uint16_t *)&offsets_type, sizeof(offsets_type) / sizeof(offsets_type.accOffsetX), (uint8_t)BNO055RegisterAddress::AccelerometerOffsetX) != sizeof(offsets_type)) {
@@ -671,20 +671,20 @@ bool BNO055::isFullyCalibrated() {
   }
 
   switch (_mode) {
-  case OPERATION_MODE_ACCONLY:
+  case OperationMode::AccelerometerOnly:
     return (accel == 3);
-  case OPERATION_MODE_MAGONLY:
+  case OperationMode::MagnetometerOnly:
     return (mag == 3);
-  case OPERATION_MODE_GYRONLY:
-  case OPERATION_MODE_M4G: /* No magnetometer calibration required. */
+  case OperationMode::GyroscopeOnly:
+  case OperationMode::MagnetometerForGyroscope: /* No magnetometer calibration required. */
     return (gyro == 3);
-  case OPERATION_MODE_ACCMAG:
-  case OPERATION_MODE_COMPASS:
+  case OperationMode::AccelerometerMagnetometer:
+  case OperationMode::Compass:
     return (accel == 3 && mag == 3);
-  case OPERATION_MODE_ACCGYRO:
-  case OPERATION_MODE_IMUPLUS:
+  case OperationMode::AccelerometerGyroscope:
+  case OperationMode::InertialMeasurementUnit:
     return (accel == 3 && gyro == 3);
-  case OPERATION_MODE_MAGGYRO:
+  case OperationMode::MagnetometerGyroscope:
     return (mag == 3 && gyro == 3);
   default:
     return (system == 3 && gyro == 3 && accel == 3 && mag == 3);
@@ -695,10 +695,10 @@ bool BNO055::isFullyCalibrated() {
  *  @brief  Enter Suspend mode (i.e., sleep)
  */
 bool BNO055::enterSuspendMode() {
-  adafruit_bno055_opmode_t modeback = _mode;
+  OperationMode modeback = _mode;
 
   /* Switch to config mode (just in case since this is the default) */
-  if (!setMode(OPERATION_MODE_CONFIG)) {
+  if (!setMode(OperationMode::Config)) {
     return false;
   }
   if (_busDevice->write8ToRegister(0x02, (uint8_t)BNO055RegisterAddress::PowerMode) != 1) {
@@ -712,10 +712,10 @@ bool BNO055::enterSuspendMode() {
  *  @brief  Enter Normal mode (i.e., wake)
  */
 bool BNO055::enterNormalMode() {
-  adafruit_bno055_opmode_t modeback = _mode;
+  OperationMode modeback = _mode;
 
   /* Switch to config mode (just in case since this is the default) */
-  if (!setMode(OPERATION_MODE_CONFIG)) {
+  if (!setMode(OperationMode::Config)) {
     return false;
   }
   if (_busDevice->write8ToRegister(0, (uint8_t)BNO055RegisterAddress::PowerMode) != 1) {

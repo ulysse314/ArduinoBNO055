@@ -60,21 +60,21 @@ public:
   } OffsetValues;
 
   /** Operation mode settings **/
-  typedef enum {
-    OPERATION_MODE_CONFIG = 0x00,
-    OPERATION_MODE_ACCONLY = 0x01,
-    OPERATION_MODE_MAGONLY = 0x02,
-    OPERATION_MODE_GYRONLY = 0x03,
-    OPERATION_MODE_ACCMAG = 0x04,
-    OPERATION_MODE_ACCGYRO = 0x05,
-    OPERATION_MODE_MAGGYRO = 0x06,
-    OPERATION_MODE_AMG = 0x07,
-    OPERATION_MODE_IMUPLUS = 0x08,
-    OPERATION_MODE_COMPASS = 0x09,
-    OPERATION_MODE_M4G = 0x0A,
-    OPERATION_MODE_NDOF_FMC_OFF = 0x0B,
-    OPERATION_MODE_NDOF = 0x0C
-  } adafruit_bno055_opmode_t;
+  enum class OperationMode {
+    Config = 0x00,
+    AccelerometerOnly = 0x01,
+    MagnetometerOnly = 0x02,
+    GyroscopeOnly = 0x03,
+    AccelerometerMagnetometer = 0x04,
+    AccelerometerGyroscope = 0x05,
+    MagnetometerGyroscope = 0x06,
+    AccelerometerMagnetometerGyroscope = 0x07,
+    InertialMeasurementUnit = 0x08,
+    Compass = 0x09,
+    MagnetometerForGyroscope = 0x0A,
+    NineDegreesOfFreedomFastMagnetometerCalibrationOff = 0x0B,
+    NineDegreesOfFreedom = 0x0C,
+  };
 
   /** Remap settings **/
   typedef enum {
@@ -121,9 +121,9 @@ public:
 
   BNO055(Address address = Address::ToLow, TwoWire *wire = &Wire);
 
-  bool begin(adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF);
+  bool begin(OperationMode mode = OperationMode::NineDegreesOfFreedom);
   bool checkChipID();
-  bool setMode(adafruit_bno055_opmode_t mode);
+  bool setMode(OperationMode mode);
   bool setAxisRemap(adafruit_bno055_axis_remap_config_t remapcode);
   bool setAxisSign(adafruit_bno055_axis_remap_sign_t remapsign);
   bool getRevInfo(adafruit_bno055_rev_info_t *);
@@ -150,7 +150,7 @@ public:
 
 private:
   I2CDevice *_busDevice;
-  adafruit_bno055_opmode_t _mode;
+  OperationMode _mode;
 };
 
 #endif
