@@ -87,5 +87,21 @@ void loop(void)
     Serial.println("failure");
   }
 
+  BNO055::DeviceInfo deviceInfo;
+  if (bno.getDeviceInfo(&deviceInfo)) {
+    Serial.print("Accelerometer chip ID:\t");
+    Serial.println(deviceInfo.accelerometerChipID, HEX);
+    Serial.print("Magnetometer chip ID:\t");
+    Serial.println(deviceInfo.magnetometerChipID, HEX);
+    Serial.print("Gyroscope chip ID:\t");
+    Serial.println(deviceInfo.gyroscopeChipID, HEX);
+    Serial.print("Software revision:\t");
+    Serial.println(deviceInfo.softwareRevision);
+    Serial.print("Bootloader revision:\t");
+    Serial.println(deviceInfo.bootloadRevision);
+  } else {
+    Serial.println("Device info failure");
+  }
+
   delay(BNO055_SAMPLERATE_DELAY_MS);
 }

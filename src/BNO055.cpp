@@ -42,9 +42,9 @@
 enum class BNO055RegisterAddress {
   /* PAGE0 REGISTER DEFINITION START*/
   ChipID = 0x00,
-  AccelerometerRevisionID = 0x01,
-  MagnetometerRevisionID = 0x02,
-  GyroscopeRevisionID = 0x03,
+  AccelerometerChipID = 0x01,
+  MagnetometerChipID = 0x02,
+  GyroscopeChipID = 0x03,
   SoftwareRevisionID = 0x04, // 2 bytes
   BootloaderRevisionID = 0x06,
 
@@ -512,30 +512,30 @@ bool BNO055::getSystemStatus(uint8_t *system_status,
  *  @param  info
  *          revision info
  */
-bool BNO055::getRevInfo(adafruit_bno055_rev_info_t *info) {
-  memset(info, 0, sizeof(adafruit_bno055_rev_info_t));
-
-  /* Check the accelerometer revision */
-  if (_busDevice->read8FromRegister(&(info->accel_rev), (uint8_t)BNO055RegisterAddress::AccelerometerRevisionID) != 1) {
+bool BNO055::getDeviceInfo(DeviceInfo *deviceInfo) {
+  memset(deviceInfo, 0, sizeof(DeviceInfo));
+  /* Fetch the accelerometer revision */
+  if (_busDevice->read8FromRegister(&(deviceInfo->accelerometerChipID), (uint8_t)BNO055RegisterAddress::AccelerometerChipID) != 1) {
+    Serial.println(" acc");
     return false;
   }
-
-  /* Check the magnetometer revision */
-  if (_busDevice->read8FromRegister(&(info->mag_rev), (uint8_t)BNO055RegisterAddress::MagnetometerRevisionID) != 1) {
+  /* Fetch the magnetometer revision */
+  if (_busDevice->read8FromRegister(&(deviceInfo->magnetometerChipID), (uint8_t)BNO055RegisterAddress::MagnetometerChipID) != 1) {
+    Serial.println(" mag");
     return false;
   }
-
-  /* Check the gyroscope revision */
-  if (_busDevice->read8FromRegister(&(info->gyro_rev), (uint8_t)BNO055RegisterAddress::GyroscopeRevisionID) != 1) {
+  /* Fetch the gyroscope revision */
+  if (_busDevice->read8FromRegister(&(deviceInfo->gyroscopeChipID), (uint8_t)BNO055RegisterAddress::GyroscopeChipID) != 1) {
+    Serial.println(" gyr");
     return false;
   }
-
-  /* Check the SW revision */
-  if (_busDevice->read8FromRegister(&(info->bl_rev), (uint8_t)BNO055RegisterAddress::BootloaderRevisionID) != 1) {
+  /* Fetch the SW revision */
+  if (_busDevice->read16FromRegister(&(deviceInfo->softwareRevision), (uint8_t)BNO055RegisterAddress::SoftwareRevisionID) != 2) {
+    Serial.println(" sw");
     return false;
   }
-
-  return _busDevice->read16FromRegister(&(info->sw_rev), (uint8_t)BNO055RegisterAddress::SoftwareRevisionID) != 1;
+  // Fetch the bootloader revision */
+  return _busDevice->read8FromRegister(&(deviceInfo->bootloadRevision), (uint8_t)BNO055RegisterAddress::BootloaderRevisionID) == 1;
 }
 
 /*!

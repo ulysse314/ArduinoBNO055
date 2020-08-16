@@ -132,15 +132,6 @@ public:
     P7,
   };
 
-  /** A structure to represent revisions **/
-  typedef struct {
-    uint8_t accel_rev; /**< acceleration rev */
-    uint8_t mag_rev;   /**< magnetometer rev */
-    uint8_t gyro_rev;  /**< gyroscrope rev */
-    uint16_t sw_rev;   /**< SW rev */
-    uint8_t bl_rev;    /**< bootloader rev */
-  } adafruit_bno055_rev_info_t;
-
   /** Vector Mappings **/
   enum class Vector {
     Accelerometer,
@@ -150,6 +141,15 @@ public:
     LinearAccelerometer,
     Gravity,
   };
+
+  /** A structure to represent revisions **/
+  typedef struct {
+    uint8_t accelerometerChipID;
+    uint8_t magnetometerChipID;
+    uint8_t gyroscopeChipID;
+    uint16_t softwareRevision;
+    uint8_t bootloadRevision;
+  } DeviceInfo;
 
   BNO055(Address address = Address::ToLow, TwoWire *wire = &Wire);
 
@@ -161,7 +161,7 @@ public:
   bool setAxisRemap(Axis xAxis, Axis yAxis, Axis zAxis);
   bool setAxisSignRemap(AxisSign remapsign);
 
-  bool getRevInfo(adafruit_bno055_rev_info_t *);
+  bool getDeviceInfo(DeviceInfo *deviceInfo);
   bool setExtCrystalUse(boolean usextal);
   bool getSystemStatus(uint8_t *system_status, uint8_t *self_test_result,
                        uint8_t *system_error);
