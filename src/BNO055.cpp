@@ -39,7 +39,7 @@
 #define CHIP_ID (0xA0)
 
 /** BNO055 Registers **/
-enum class BNO055RegisterAddress {
+enum class BNO055RegisterAddress : uint8_t {
   /* PAGE0 REGISTER DEFINITION START*/
   ChipID = 0x00,
   AccelerometerChipID = 0x01,
@@ -138,6 +138,13 @@ enum class BNO055PowerMode : uint8_t {
   Normal = 0x00,
   LowPower = 0x01,
   Suspend = 0x02,
+};
+
+enum class BNO055SelfTestResultMask : uint8_t {
+  Microcontroller = 0b1000,
+  Gyroscope =       0b0100,
+  Magnetometer =    0x0010,
+  Accelerometer =   0x0001,
 };
 
 namespace {
@@ -433,77 +440,45 @@ bool BNO055::setExtCrystalUse(boolean usextal) {
 
 /*!
  *   @brief  Gets the latest system status info
- *   @param  system_status
+ *   @param  systemStatus
  *           system status info
  *   @param  self_test_result
  *           self test result
  *   @param  system_error
  *           system error info
  */
-bool BNO055::getSystemStatus(uint8_t *system_status,
-                                      uint8_t *self_test_result,
-                                      uint8_t *system_error) {
-  if (_busDevice->write8ToRegister(0, (uint8_t)BNO055RegisterAddress::PageID) != 1) {
+bool BNO055::getSystemStatus(SystemStatus *systemStatus) {
+  if (!systemStatus) {
+    return true;
+  }
+  return _busDevice->read8FromRegister((uint8_t*)systemStatus, (uint8_t)BNO055RegisterAddress::SystemStatus) == 1;
+}
+
+bool BNO055::getSystemError(SystemError *systemError) {
+  if (!systemError) {
+    return true;
+  }
+  return _busDevice->read8FromRegister((uint8_t*)systemError, (uint8_t)BNO055RegisterAddress::SystemError) == 1;
+}
+
+bool BNO055::getSelfTestResult(bool *accelerometerSelfTest, bool *magnetometerSelfTest,
+                               bool *gyroscopeSelfTest, bool *microcontrollerSelfTest) {
+  uint8_t selfTestResult = 0;
+  if (_busDevice->read8FromRegister(&selfTestResult, (uint8_t)BNO055RegisterAddress::SelfTestResult) != 1) {
     return false;
   }
-
-  /* System Status (see section 4.3.58)
-     0 = Idle
-     1 = System Error
-     2 = Initializing Peripherals
-     3 = System Iniitalization
-     4 = Executing Self-Test
-     5 = Sensor fusio algorithm running
-     6 = System running without fusion algorithms
-   */
-
-  if (system_status != 0) {
-    size_t count = _busDevice->read8FromRegister(system_status, (uint8_t)BNO055RegisterAddress::SystemStatus);
-    if (count != 1) {
-      return false;
-    }
+  if (accelerometerSelfTest) {
+    *accelerometerSelfTest = (selfTestResult & (uint8_t)BNO055SelfTestResultMask::Accelerometer) != 0;
   }
-
-  /* Self Test Results
-     1 = test passed, 0 = test failed
-
-     Bit 0 = Accelerometer self test
-     Bit 1 = Magnetometer self test
-     Bit 2 = Gyroscope self test
-     Bit 3 = MCU self test
-
-     0x0F = all good!
-   */
-
-  if (self_test_result != 0) {
-    size_t count = _busDevice->read8FromRegister(self_test_result, (uint8_t)BNO055RegisterAddress::SelfTestResult);
-    if (count != 1) {
-      return false;
-    }
+  if (magnetometerSelfTest) {
+    *magnetometerSelfTest = (selfTestResult & (uint8_t)BNO055SelfTestResultMask::Magnetometer) != 0;
   }
-
-  /* System Error (see section 4.3.59)
-     0 = No error
-     1 = Peripheral initialization error
-     2 = System initialization error
-     3 = Self test result failed
-     4 = Register map value out of range
-     5 = Register map address out of range
-     6 = Register map write error
-     7 = BNO low power mode not available for selected operat ion mode
-     8 = Accelerometer power mode not available
-     9 = Fusion algorithm configuration error
-     A = Sensor configuration error
-   */
-
-  if (system_error != 0) {
-    size_t count = _busDevice->read8FromRegister(self_test_result, (uint8_t)BNO055RegisterAddress::SystemError);
-    if (count != 1) {
-      return false;
-    }
+  if (gyroscopeSelfTest) {
+    *gyroscopeSelfTest = (selfTestResult & (uint8_t)BNO055SelfTestResultMask::Gyroscope) != 0;
   }
-
-  delay(200);
+  if (microcontrollerSelfTest) {
+    *microcontrollerSelfTest = (selfTestResult & (uint8_t)BNO055SelfTestResultMask::Microcontroller) != 0;
+  }
   return true;
 }
 

@@ -103,5 +103,90 @@ void loop(void)
     Serial.println("Device info failure");
   }
 
+  BNO055::SystemStatus systemStatus;
+  if (bno.getSystemStatus(&systemStatus)) {
+    Serial.print("System status1: ");
+    switch (systemStatus) {
+    case BNO055::SystemStatus::Idle:
+      Serial.println("idle");
+      break;
+    case BNO055::SystemStatus::Error:
+      Serial.println("error");
+      break;
+    case BNO055::SystemStatus::InitializingPeripherals:
+      Serial.println("initializing peripherals");
+      break;
+    case BNO055::SystemStatus::SystemInitialization:
+      Serial.println("system initialization");
+      break;
+    case BNO055::SystemStatus::ExecutingSelfTest:
+      Serial.println("executing self test");
+      break;
+    case BNO055::SystemStatus::RunningWithFusionAlgorithm:
+      Serial.println("running with fusion algorithm");
+      break;
+    case BNO055::SystemStatus::RunningWihtoutFusionAlgorithm:
+      Serial.println("running without fusion algorithm");
+      break;
+    }
+  } else {
+    Serial.println("System status failed");
+  }
+  BNO055::SystemError systemError;
+  if (bno.getSystemError(&systemError)) {
+    Serial.print("System error2: ");
+    switch (systemError) {
+    case BNO055::SystemError::NoError:
+      Serial.println("no error");
+      break;
+    case BNO055::SystemError::PeripheralInitializationError:
+      Serial.println("peripheral initialiazation error");
+      break;
+    case BNO055::SystemError::SystemInitializationError:
+      Serial.println("system initialiazation error");
+      break;
+    case BNO055::SystemError::SelfTestResultFailed:
+      Serial.println("self test result failed");
+      break;
+    case BNO055::SystemError::RegisterMapValueOutOfRange:
+      Serial.println("register map value out of range");
+      break;
+    case BNO055::SystemError::RegisterMapAddressOutOfRange:
+      Serial.println("register map address out of range");
+      break;
+    case BNO055::SystemError::RegisterMapWriteError:
+      Serial.println("register map write error");
+      break;
+    case BNO055::SystemError::LowPowerNotAvailableForSelectedOperationMode:
+      Serial.println("low power not available for selected operation mode");
+      break;
+    case BNO055::SystemError::AccelerometerPowerModeNotAvailable:
+      Serial.println("accelerometer power mode not available");
+      break;
+    case BNO055::SystemError::FusionAlgorithmConfigurationError:
+      Serial.println("fusion algorithm configuraton error");
+      break;
+    case BNO055::SystemError::SensorConfigurationError:
+      Serial.println("sensor configuration error");
+      break;
+    }
+  } else {
+    Serial.println("System error failed");
+  }
+  bool accelerometerSelfTest, magnetometerSelfTest, gyroscopeSelfTest, microcontrollerSelfTest;
+  if (bno.getSelfTestResult(&accelerometerSelfTest, &magnetometerSelfTest, &gyroscopeSelfTest, &microcontrollerSelfTest)) {
+    Serial.print("acc: ");
+    Serial.print(accelerometerSelfTest);
+    Serial.print(", mag: ");
+    Serial.print(magnetometerSelfTest);
+    Serial.print(", gyr: ");
+    Serial.print(gyroscopeSelfTest);
+    Serial.print(", mcu: ");
+    Serial.println(microcontrollerSelfTest);
+  } else {
+    Serial.println("Self test result failed");
+  }
+  Serial.println("--");
+
   delay(BNO055_SAMPLERATE_DELAY_MS);
 }

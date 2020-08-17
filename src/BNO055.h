@@ -60,7 +60,7 @@ public:
   } OffsetValues;
 
   /** Operation mode settings **/
-  enum class OperationMode {
+  enum class OperationMode : uint8_t {
     Config = 0x00,
     AccelerometerOnly = 0x01,
     MagnetometerOnly = 0x02,
@@ -77,14 +77,14 @@ public:
   };
 
   /** Remap settings **/
-  enum class Axis {
+  enum class Axis : uint8_t {
     XAxis = 0,
     YAxis = 1,
     ZAxis = 2,
   };
 
   /** Remap Signs **/
-  enum class AxisSign {
+  enum class AxisSign : uint8_t {
     // 0: Positive X, Positive Y, Positive Z
     PosXPosYPosZ = 0b000,
     // 1: Positive X, Positive Y, Negative Z
@@ -103,7 +103,7 @@ public:
     NegXNegYNegZ = 0b111,
   };
 
-  enum class PlacementConfig {
+  enum class PlacementConfig : uint8_t {
     // Top view:
     // NegXPosYPosZ, 0x21 (2,0,1), 0x04
     // Z: +Z, Y: +X, X: -Y
@@ -133,13 +133,37 @@ public:
   };
 
   /** Vector Mappings **/
-  enum class Vector {
+  enum class Vector : uint8_t {
     Accelerometer,
     Magnetometer,
     Gyroscope,
     Euler,
     LinearAccelerometer,
     Gravity,
+  };
+
+  enum class SystemStatus : uint8_t {
+    Idle = 0,
+    Error = 1,
+    InitializingPeripherals = 2,
+    SystemInitialization = 3,
+    ExecutingSelfTest = 4,
+    RunningWithFusionAlgorithm = 5,
+    RunningWihtoutFusionAlgorithm = 6,
+  };
+
+  enum class SystemError : uint8_t {
+    NoError = 0x00,
+    PeripheralInitializationError = 0x01,
+    SystemInitializationError = 0x02,
+    SelfTestResultFailed = 0x03,
+    RegisterMapValueOutOfRange = 0x04,
+    RegisterMapAddressOutOfRange = 0x05,
+    RegisterMapWriteError = 0x06,
+    LowPowerNotAvailableForSelectedOperationMode = 0x07,
+    AccelerometerPowerModeNotAvailable = 0x08,
+    FusionAlgorithmConfigurationError = 0x09,
+    SensorConfigurationError = 0x0A,
   };
 
   /** A structure to represent revisions **/
@@ -163,8 +187,10 @@ public:
 
   bool getDeviceInfo(DeviceInfo *deviceInfo);
   bool setExtCrystalUse(boolean usextal);
-  bool getSystemStatus(uint8_t *system_status, uint8_t *self_test_result,
-                       uint8_t *system_error);
+  bool getSystemStatus(SystemStatus *systemStatus);
+  bool getSystemError(SystemError *systemError);
+  bool getSelfTestResult(bool *accelerometerSelfTest, bool *magnetometerSelfTest,
+                         bool *gyroscopeSelfTest, bool *microcontrollerSelfTest);
   bool getCalibration(uint8_t *system, uint8_t *gyro, uint8_t *accel,
                       uint8_t *mag);
 
