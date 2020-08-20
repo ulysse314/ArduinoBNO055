@@ -26,7 +26,7 @@
 */
 
 /* Set the delay between fresh samples */
-uint16_t BNO055_SAMPLERATE_DELAY_MS = 100;
+uint16_t BNO055_SAMPLERATE_DELAY_MS = 500;
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
@@ -46,7 +46,7 @@ void setup(void)
     Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
     while (1);
   }
-
+  bno.setPlacementConfig(BNO055::PlacementConfig::P5);
   delay(1000);
 }
 
@@ -185,6 +185,19 @@ void loop(void)
     Serial.println(microcontrollerSelfTest);
   } else {
     Serial.println("Self test result failed");
+  }
+  uint8_t system, gyro, accel, mag = 0;
+  if (!bno.getCalibration(&system, &gyro, &accel, &mag)) {
+    Serial.println("Failed to get calibration");
+  } else {
+    Serial.print("CALIBRATION: Sys=");
+    Serial.print(system, DEC);
+    Serial.print(" Gyro=");
+    Serial.print(gyro, DEC);
+    Serial.print(" Accel=");
+    Serial.print(accel, DEC);
+    Serial.print(" Mag=");
+    Serial.println(mag, DEC);
   }
   Serial.println("--");
 
