@@ -46,7 +46,9 @@ void setup(void)
     Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
     while (1);
   }
-  bno.setPlacementConfig(BNO055::PlacementConfig::P5);
+  BNO055::AxesConfiguration axesConfiguration;
+  axesConfiguration = BNO055::getAxesConfigurationForDevicePlacement(BNO055::DevicePlacement::P5);
+  bno.setAxesRemap(axesConfiguration);
   delay(1000);
 }
 

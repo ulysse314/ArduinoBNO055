@@ -298,120 +298,77 @@ bool BNO055::setMode(OperationMode mode) {
   return result;
 }
 
-bool BNO055::setPlacementConfig(PlacementConfig placementConfig) {
-  AxisSign axisSign = AxisSign::PosXPosYPosZ;
-  Axis xAxis = Axis::XAxis;
-  Axis yAxis = Axis::YAxis;
-  Axis zAxis = Axis::ZAxis;
-  switch (placementConfig) {
-  case PlacementConfig::P0:
-    axisSign = AxisSign::PosXPosYPosZ;
-    xAxis = Axis::YAxis;
-    yAxis = Axis::XAxis;
-    zAxis = Axis::ZAxis;
+BNO055::AxesConfiguration BNO055::getAxesConfigurationForDevicePlacement(DevicePlacement devicePlacement) {
+  AxesConfiguration result = { { Axis::X, false}, { Axis::Y, false }, { Axis::Z, false} };
+  switch (devicePlacement) {
+  case DevicePlacement::P0:
+    result.x.inverted = true;
+    result.x.axis = Axis::Y;
+    result.y.axis = Axis::X;
+    result.z.axis = Axis::Z;
     break;
-  case PlacementConfig::P1:
-    axisSign = AxisSign::PosXPosYPosZ;
-    xAxis = Axis::XAxis;
-    yAxis = Axis::YAxis;
-    zAxis = Axis::ZAxis;
+  case DevicePlacement::P1:
+    result.x.axis = Axis::X;
+    result.y.axis = Axis::Y;
+    result.z.axis = Axis::Z;
     break;
-  case PlacementConfig::P2:
-    axisSign = AxisSign::PosXPosYPosZ;
-    xAxis = Axis::XAxis;
-    yAxis = Axis::YAxis;
-    zAxis = Axis::ZAxis;
+  case DevicePlacement::P2:
+    result.x.inverted = true;
+    result.x.axis = Axis::X;
+    result.y.axis = Axis::Y;
+    result.z.axis = Axis::Z;
     break;
-  case PlacementConfig::P3:
-    axisSign = AxisSign::PosXPosYPosZ;
-    xAxis = Axis::YAxis;
-    yAxis = Axis::XAxis;
-    zAxis = Axis::ZAxis;
+  case DevicePlacement::P3:
+    result.y.inverted = true;
+    result.x.axis = Axis::Y;
+    result.y.axis = Axis::X;
+    result.z.axis = Axis::Z;
     break;
-  case PlacementConfig::P4:
-    axisSign = AxisSign::PosXPosYPosZ;
-    xAxis = Axis::XAxis;
-    yAxis = Axis::YAxis;
-    zAxis = Axis::ZAxis;
+  case DevicePlacement::P4:
+    result.y.inverted = true;
+    result.z.inverted = true;
+    result.x.axis = Axis::X;
+    result.y.axis = Axis::Y;
+    result.z.axis = Axis::Z;
     break;
-  case PlacementConfig::P5:
-    axisSign = AxisSign::PosXPosYPosZ;
-    xAxis = Axis::YAxis;
-    yAxis = Axis::XAxis;
-    zAxis = Axis::ZAxis;
+  case DevicePlacement::P5:
+    result.z.inverted = true;
+    result.x.axis = Axis::Y;
+    result.y.axis = Axis::X;
+    result.z.axis = Axis::Z;
     break;
-  case PlacementConfig::P6:
-    axisSign = AxisSign::PosXPosYPosZ;
-    xAxis = Axis::YAxis;
-    yAxis = Axis::XAxis;
-    zAxis = Axis::ZAxis;
+  case DevicePlacement::P6:
+    result.x.inverted = true;
+    result.y.inverted = true;
+    result.z.inverted = true;
+    result.x.axis = Axis::Y;
+    result.y.axis = Axis::X;
+    result.z.axis = Axis::Z;
     break;
-  case PlacementConfig::P7:
-    axisSign = AxisSign::PosXPosYPosZ;
-    xAxis = Axis::XAxis;
-    yAxis = Axis::YAxis;
-    zAxis = Axis::ZAxis;
+  case DevicePlacement::P7:
+    result.x.inverted = true;
+    result.z.inverted = true;
+    result.x.axis = Axis::X;
+    result.y.axis = Axis::Y;
+    result.z.axis = Axis::Z;
     break;
   };
-  bool result = setAxisRemap(xAxis, yAxis, zAxis);
-  if (!result) {
-    return result;
-  }
-  return setAxisSignRemap(axisSign);
+  return result;
 }
 
-/*!
- *  @brief  Changes the chip's axis remap
- *  @param  remapcode
- *          remap code possible values
- *          [AxisRemapConfig::P0
- *           AxisRemapConfig::P1 (default)
- *           AxisRemapConfig::P2
- *           AxisRemapConfig::P3
- *           AxisRemapConfig::P4
- *           AxisRemapConfig::P5
- *           AxisRemapConfig::P6
- *           AxisRemapConfig::P7]
- */
-bool BNO055::setAxisRemap(Axis xAxis, Axis yAxis, Axis zAxis) {
+bool BNO055::setAxesRemap(AxesConfiguration configuration) {
   OperationMode modeback = _mode;
-
   if (!setMode(OperationMode::Config)) {
     return false;
   }
-  uint8_t remapConfig = ((uint8_t)zAxis << 4) + ((uint8_t)yAxis << 2) + (uint8_t)xAxis;
+  uint8_t axisMapSign = ((configuration.x.inverted ? 1 : 0) << 2) | ((configuration.y.inverted ? 1 : 0) << 1) | ((configuration.z.inverted ? 1 : 0) << 0);
+  if (_busDevice->write8ToRegister((uint8_t)axisMapSign, (uint8_t)BNO055RegisterAddress::AxisMapSign) != 1) {
+    return false;
+  }
+  uint8_t remapConfig = ((uint8_t)configuration.z.axis << 4) | ((uint8_t)configuration.y.axis << 2) | ((uint8_t)configuration.x.axis);
   if (_busDevice->write8ToRegister(remapConfig, (uint8_t)BNO055RegisterAddress::AxisMapConfig) != 1) {
     return false;
   }
-  delay(10);
-  /* Set the requested operating mode (see section 3.3) */
-  return setMode(modeback);
-}
-
-/*!
- *  @brief  Changes the chip's axis signs
- *  @param  remapsign
- *          remap sign possible values
- *          [AxisSign::P0
- *           AxisSign::P1 (default)
- *           AxisSign::P2
- *           AxisSign::P3
- *           AxisSign::P4
- *           AxisSign::P5
- *           AxisSign::P6
- *           AxisSign::P7]
- */
-bool BNO055::setAxisSignRemap(AxisSign remapSign) {
-  OperationMode modeback = _mode;
-
-  if (!setMode(OperationMode::Config)) {
-    return false;
-  }
-  if (_busDevice->write8ToRegister((uint8_t)remapSign, (uint8_t)BNO055RegisterAddress::AxisMapSign) != 1) {
-    return false;
-  }
-  delay(10);
-  /* Set the requested operating mode (see section 3.3) */
   return setMode(modeback);
 }
 

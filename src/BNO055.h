@@ -78,10 +78,21 @@ public:
 
   /** Remap settings **/
   enum class Axis : uint8_t {
-    XAxis = 0,
-    YAxis = 1,
-    ZAxis = 2,
+    X = 0,
+    Y = 1,
+    Z = 2,
   };
+
+  typedef struct {
+    Axis axis;
+    bool inverted;
+  } AxisConfiguration;
+
+  typedef struct {
+    AxisConfiguration x;
+    AxisConfiguration y;
+    AxisConfiguration z;
+  } AxesConfiguration;
 
   /** Remap Signs **/
   enum class AxisSign : uint8_t {
@@ -103,32 +114,32 @@ public:
     NegXNegYNegZ = 0b111,
   };
 
-  enum class PlacementConfig : uint8_t {
+  enum class DevicePlacement : uint8_t {
     // Top view:
-    // NegXPosYPosZ, 0x21 (2,0,1), 0x04
-    // Z: +Z, Y: +X, X: -Y
+    // P0: NegXPosYPosZ, 0x21 (2,0,1), 0x04
+    //     Z: +Z, Y: +X, X: -Y
     P0,
-    // PosXPosYPosZ, 0x24 (2,1,0), 0x00
-    // Z: +Z, Y: +Y, X: +X
+    // P1: PosXPosYPosZ, 0x24 (2,1,0), 0x00
+    //     Z: +Z, Y: +Y, X: +X
     P1,
-    // NegXNegYPosZ, 0x24 (2,1,0), 0x06
-    // Z: +Z, Y: -Y, X: -X
+    // P2: NegXNegYPosZ, 0x24 (2,1,0), 0x06
+    //     Z: +Z, Y: -Y, X: -X
     P2,
-    // PosXNegYPosZ, 0x21 (2,0,1), 0x02
-    // Z: +Z, Y: -X, X: +Y
+    // P3: PosXNegYPosZ, 0x21 (2,0,1), 0x02
+    //     Z: +Z, Y: -X, X: +Y
     P3,
     // Bottom view:
-    // PosXNegYNegZ, 0x24 (2,1,0), 0x03
-    // Z: -Z, Y: -Y, X: +X
+    // P4: PosXNegYNegZ, 0x24 (2,1,0), 0x03
+    //     Z: -Z, Y: -Y, X: +X
     P4,
-    // PosXPosYNegZ, 0x21 (2,0,1), 0x01
-    // Z: -Z, Y: +X, X: +Y
+    // P5: PosXPosYNegZ, 0x21 (2,0,1), 0x01
+    //     Z: -Z, Y: +X, X: +Y
     P5,
-    // NegXNegYNegZ, 0x21 (2,0,1), 0x07
-    // Z: -Z, Y: -X, X: -Y
+    // P6: NegXNegYNegZ, 0x21 (2,0,1), 0x07
+    //     Z: -Z, Y: -X, X: -Y
     P6,
-    // NegXNegYNegZ, 0x24 (2,1,0), 0x05
-    // Z: -Z, Y: -Y, X: -X
+    // P7: NegXNegYNegZ, 0x24 (2,1,0), 0x05
+    //     Z: -Z, Y: -Y, X: -X
     P7,
   };
 
@@ -181,9 +192,8 @@ public:
   bool checkChipID();
 
   bool setMode(OperationMode mode);
-  bool setPlacementConfig(PlacementConfig placementConfig);
-  bool setAxisRemap(Axis xAxis, Axis yAxis, Axis zAxis);
-  bool setAxisSignRemap(AxisSign remapsign);
+  static AxesConfiguration getAxesConfigurationForDevicePlacement(DevicePlacement devicePlacement);
+  bool setAxesRemap(AxesConfiguration configuration);
 
   bool getDeviceInfo(DeviceInfo *deviceInfo);
   bool setExtCrystalUse(boolean usextal);
