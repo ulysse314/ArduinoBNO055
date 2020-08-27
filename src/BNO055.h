@@ -94,26 +94,6 @@ public:
     AxisConfiguration z;
   } AxesConfiguration;
 
-  /** Remap Signs **/
-  enum class AxisSign : uint8_t {
-    // 0: Positive X, Positive Y, Positive Z
-    PosXPosYPosZ = 0b000,
-    // 1: Positive X, Positive Y, Negative Z
-    PosXPosYNegZ = 0b001,
-    // 2: Positive X, Negative Y, Positive Z
-    PosXNegYPosZ = 0b010,
-    // 3: Positive X, Negative Y, Negative Z
-    PosXNegYNegZ = 0b011,
-    // 4: Negative X, Positive Y, Positive Z
-    NegXPosYPosZ = 0b100,
-    // 5: Negative X, Positive Y, Negative Z
-    NegXPosYNegZ = 0b101,
-    // 6: Negative X, Negative Y, Positive Z
-    NegXNegYPosZ = 0b110,
-    // 7: Negative X, Negative Y, Negative Z
-    NegXNegYNegZ = 0b111,
-  };
-
   enum class DevicePlacement : uint8_t {
     // Top view:
     // P0: NegXPosYPosZ, 0x21 (2,0,1), 0x04
