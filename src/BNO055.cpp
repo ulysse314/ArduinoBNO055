@@ -154,7 +154,7 @@ BNO055RegisterAddress RegisterAddressForVector(BNO055::Vector vector) {
   case BNO055::Vector::Accelerometer:
     return BNO055RegisterAddress::AccelerometerDataX;
   case BNO055::Vector::Magnetometer:
-    return BNO055RegisterAddress::AccelerometerDataZ;
+    return BNO055RegisterAddress::MagnetometerDataX;
   case BNO055::Vector::Gyroscope:
     return BNO055RegisterAddress::GyroscopeDataX;
   case BNO055::Vector::Euler:
