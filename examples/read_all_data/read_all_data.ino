@@ -177,7 +177,7 @@ void loop(void)
   }
   bool accelerometerSelfTest, magnetometerSelfTest, gyroscopeSelfTest, microcontrollerSelfTest;
   if (bno.getSelfTestResult(&accelerometerSelfTest, &magnetometerSelfTest, &gyroscopeSelfTest, &microcontrollerSelfTest)) {
-    Serial.print("acc: ");
+    Serial.print("Self test, acc: ");
     Serial.print(accelerometerSelfTest);
     Serial.print(", mag: ");
     Serial.print(magnetometerSelfTest);
@@ -192,7 +192,7 @@ void loop(void)
   if (!bno.getCalibration(&system, &gyro, &accel, &mag)) {
     Serial.println("Failed to get calibration");
   } else {
-    Serial.print("CALIBRATION: Sys=");
+    Serial.print("Calibration: Sys=");
     Serial.print(system, DEC);
     Serial.print(" Gyro=");
     Serial.print(gyro, DEC);
