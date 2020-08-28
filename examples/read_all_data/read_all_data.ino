@@ -49,7 +49,6 @@ void setup(void)
   BNO055::AxesConfiguration axesConfiguration;
   axesConfiguration = BNO055::getAxesConfigurationForDevicePlacement(BNO055::DevicePlacement::P5);
   bno.setAxesRemap(axesConfiguration);
-  delay(1000);
 }
 
 void loop(void)
