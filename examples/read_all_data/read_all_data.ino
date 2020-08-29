@@ -106,7 +106,7 @@ void loop(void)
 
   BNO055::SystemStatus systemStatus;
   if (bno.getSystemStatus(&systemStatus)) {
-    Serial.print("System status1: ");
+    Serial.print("System status: ");
     switch (systemStatus) {
     case BNO055::SystemStatus::Idle:
       Serial.println("idle");
@@ -135,7 +135,7 @@ void loop(void)
   }
   BNO055::SystemError systemError;
   if (bno.getSystemError(&systemError)) {
-    Serial.print("System error2: ");
+    Serial.print("System error: ");
     switch (systemError) {
     case BNO055::SystemError::NoError:
       Serial.println("no error");
