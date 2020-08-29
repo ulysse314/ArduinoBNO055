@@ -488,16 +488,16 @@ bool BNO055::getCalibration(uint8_t *sys, uint8_t *gyro,
     return false;
   }
   if (sys != NULL) {
-    *sys = (calData >> 6) & 0x03;
+    *sys = (calData >> 6) & 0b11;
   }
   if (gyro != NULL) {
-    *gyro = (calData >> 4) & 0x03;
+    *gyro = (calData >> 4) & 0b11;
   }
   if (accel != NULL) {
-    *accel = (calData >> 2) & 0x03;
+    *accel = (calData >> 2) & 0b11;
   }
   if (mag != NULL) {
-    *mag = calData & 0x03;
+    *mag = calData & 0b11;
   }
   return true;
 }
