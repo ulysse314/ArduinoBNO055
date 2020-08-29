@@ -448,22 +448,18 @@ bool BNO055::getDeviceInfo(DeviceInfo *deviceInfo) {
   memset(deviceInfo, 0, sizeof(DeviceInfo));
   /* Fetch the accelerometer revision */
   if (_busDevice->read8FromRegister(&(deviceInfo->accelerometerChipID), (uint8_t)BNO055RegisterAddress::AccelerometerChipID) != 1) {
-    Serial.println(" acc");
     return false;
   }
   /* Fetch the magnetometer revision */
   if (_busDevice->read8FromRegister(&(deviceInfo->magnetometerChipID), (uint8_t)BNO055RegisterAddress::MagnetometerChipID) != 1) {
-    Serial.println(" mag");
     return false;
   }
   /* Fetch the gyroscope revision */
   if (_busDevice->read8FromRegister(&(deviceInfo->gyroscopeChipID), (uint8_t)BNO055RegisterAddress::GyroscopeChipID) != 1) {
-    Serial.println(" gyr");
     return false;
   }
   /* Fetch the SW revision */
   if (_busDevice->read16FromRegister(&(deviceInfo->softwareRevision), (uint8_t)BNO055RegisterAddress::SoftwareRevisionID) != 2) {
-    Serial.println(" sw");
     return false;
   }
   // Fetch the bootloader revision */
