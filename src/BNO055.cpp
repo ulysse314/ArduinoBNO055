@@ -143,8 +143,8 @@ enum class BNO055PowerMode : uint8_t {
 enum class BNO055SelfTestResultMask : uint8_t {
   Microcontroller = 0b1000,
   Gyroscope =       0b0100,
-  Magnetometer =    0x0010,
-  Accelerometer =   0x0001,
+  Magnetometer =    0b0010,
+  Accelerometer =   0b0001,
 };
 
 namespace {
