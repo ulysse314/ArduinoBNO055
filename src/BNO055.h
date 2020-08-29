@@ -96,29 +96,29 @@ public:
 
   enum class DevicePlacement : uint8_t {
     // Top view:
-    // P0: NegXPosYPosZ, 0x21 (2,0,1), 0x04
+    // P0: 0x21 (2,0,1), 0x04 (-X, +Y, +Z)
     //     Z: +Z, Y: +X, X: -Y
     P0,
-    // P1: PosXPosYPosZ, 0x24 (2,1,0), 0x00
+    // P1: 0x24 (2,1,0), 0x00 (+X, +Y, +Z)
     //     Z: +Z, Y: +Y, X: +X
     P1,
-    // P2: NegXNegYPosZ, 0x24 (2,1,0), 0x06
+    // P2: 0x24 (2,1,0), 0x06 (-X, -Y, +Z)
     //     Z: +Z, Y: -Y, X: -X
     P2,
-    // P3: PosXNegYPosZ, 0x21 (2,0,1), 0x02
+    // P3: 0x21 (2,0,1), 0x02 (+X, -Y, +Z)
     //     Z: +Z, Y: -X, X: +Y
     P3,
     // Bottom view:
-    // P4: PosXNegYNegZ, 0x24 (2,1,0), 0x03
+    // P4: 0x24 (2,1,0), 0x03 (+X, -Y, -Z)
     //     Z: -Z, Y: -Y, X: +X
     P4,
-    // P5: PosXPosYNegZ, 0x21 (2,0,1), 0x01
+    // P5: 0x21 (2,0,1), 0x01 (+X, +Y, -Z)
     //     Z: -Z, Y: +X, X: +Y
     P5,
-    // P6: NegXNegYNegZ, 0x21 (2,0,1), 0x07
+    // P6: 0x21 (2,0,1), 0x07 (-X, -Y, -Z)
     //     Z: -Z, Y: -X, X: -Y
     P6,
-    // P7: NegXNegYNegZ, 0x24 (2,1,0), 0x05
+    // P7: 0x24 (2,1,0), 0x05 (-X, -Y, +Z)
     //     Z: -Z, Y: -Y, X: -X
     P7,
   };
