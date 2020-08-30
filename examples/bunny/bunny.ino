@@ -44,9 +44,6 @@ void setup()
   Serial.println("Orientation Sensor Test"); Serial.println("");
   Wire.begin();
 
-  delay(10000);
-  Serial.println("ok");
-
   /* Initialise the sensor */
   if(!bno.begin())
   {

@@ -35,7 +35,6 @@ BNO055 bno;
 void setup(void)
 {
   Serial.begin(115200);
-  Serial.println("Orientation Sensor Test"); Serial.println("");
 
   /* Enable I2C */
   Wire.begin();
