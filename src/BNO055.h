@@ -157,6 +157,13 @@ public:
     SensorConfigurationError = 0x0A,
   };
 
+  enum class Calibration : uint8_t {
+    None = 0,
+    Low = 1,
+    Medium = 2,
+    Fully = 3,
+  };
+
   /** A structure to represent revisions **/
   typedef struct {
     uint8_t accelerometerChipID;
@@ -181,8 +188,8 @@ public:
   bool getSystemError(SystemError *systemError);
   bool getSelfTestResult(bool *accelerometerSelfTest, bool *magnetometerSelfTest,
                          bool *gyroscopeSelfTest, bool *microcontrollerSelfTest);
-  bool getCalibration(uint8_t *system, uint8_t *gyro, uint8_t *accel,
-                      uint8_t *mag);
+  bool getCalibration(Calibration *system, Calibration *gyro, Calibration *accel,
+                      Calibration *mag);
 
   bool getVector(Vector vector, imu::Vector<3> *vectorData);
   bool getQuat(imu::Quaternion *quat);

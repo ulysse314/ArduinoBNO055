@@ -481,23 +481,23 @@ bool BNO055::getDeviceInfo(DeviceInfo *deviceInfo) {
  *  @param  mag
  *          Current calibration status of Magnetometer, read-only
  */
-bool BNO055::getCalibration(uint8_t *sys, uint8_t *gyro,
-                                     uint8_t *accel, uint8_t *mag) {
+bool BNO055::getCalibration(Calibration *sys, Calibration *gyro,
+                            Calibration *accel, Calibration *mag) {
   uint8_t calData;
   if (_busDevice->read8FromRegister(&calData, (uint8_t)BNO055RegisterAddress::CalibrationStatus) != 1) {
     return false;
   }
   if (sys != NULL) {
-    *sys = (calData >> 6) & 0b11;
+    *sys = (Calibration)((calData >> 6) & 0b11);
   }
   if (gyro != NULL) {
-    *gyro = (calData >> 4) & 0b11;
+    *gyro = (Calibration)((calData >> 4) & 0b11);
   }
   if (accel != NULL) {
-    *accel = (calData >> 2) & 0b11;
+    *accel = (Calibration)((calData >> 2) & 0b11);
   }
   if (mag != NULL) {
-    *mag = calData & 0b11;
+    *mag = (Calibration)(calData & 0b11);
   }
   return true;
 }
@@ -655,29 +655,29 @@ bool BNO055::setSensorOffsets(
  *  @return status of calibration
  */
 bool BNO055::isFullyCalibrated() {
-  uint8_t system, gyro, accel, mag;
+  Calibration system, gyro, accel, mag;
   if (!getCalibration(&system, &gyro, &accel, &mag)) {
     return false;
   }
 
   switch (_mode) {
   case OperationMode::AccelerometerOnly:
-    return (accel == 3);
+    return (accel == Calibration::Fully);
   case OperationMode::MagnetometerOnly:
-    return (mag == 3);
+    return (mag == Calibration::Fully);
   case OperationMode::GyroscopeOnly:
   case OperationMode::MagnetometerForGyroscope: /* No magnetometer calibration required. */
-    return (gyro == 3);
+    return (gyro == Calibration::Fully);
   case OperationMode::AccelerometerMagnetometer:
   case OperationMode::Compass:
-    return (accel == 3 && mag == 3);
+    return (accel == Calibration::Fully && mag == Calibration::Fully);
   case OperationMode::AccelerometerGyroscope:
   case OperationMode::InertialMeasurementUnit:
-    return (accel == 3 && gyro == 3);
+    return (accel == Calibration::Fully && gyro == Calibration::Fully);
   case OperationMode::MagnetometerGyroscope:
-    return (mag == 3 && gyro == 3);
+    return (mag == Calibration::Fully && gyro == Calibration::Fully);
   default:
-    return (system == 3 && gyro == 3 && accel == 3 && mag == 3);
+    return (system == Calibration::Fully && gyro == Calibration::Fully && accel == Calibration::Fully && mag == Calibration::Fully);
   }
 }
 
